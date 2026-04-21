@@ -1,0 +1,20 @@
+# --- BACKEND ---
+backend/target/
+backend/.idea/
+backend/*.iml
+# 🚨 SECRETO CRÍTICO: No subir claves de BD
+backend/src/main/resources/application.properties
+
+# --- FRONTEND ---
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/.vscode/
+frontend/.idea/
+frontend/npm-debug.log*
+frontend/yarn-error.log*
+
+# --- GENERAL ---
+.idea/
+.DS_Store
+*.log
