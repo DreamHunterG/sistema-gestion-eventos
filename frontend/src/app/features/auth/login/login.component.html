@@ -1,0 +1,68 @@
+<div class="min-h-screen w-full flex flex-col items-center justify-center bg-[#f9fafb] p-4">
+
+  <!-- Logo y Título Superior -->
+  <div class="text-center mb-10">
+    <h1 class="text-sge-navy text-3xl font-black tracking-tighter m-0">SGE</h1>
+    <p class="text-gray-500 text-sm font-medium">Sistema de Gestión de Eventos</p>
+  </div>
+
+  <!-- Tarjeta de Login (Igual a Figma) -->
+  <div class="w-full max-w-[450px] bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] p-12">
+
+    <div class="flex justify-between items-start mb-8">
+      <h2 class="text-2xl font-bold text-slate-800">Acceso al Portal</h2>
+      <div class="bg-yellow-50 p-2 rounded-xl">
+        <mat-icon class="text-[#D4AF37] scale-125">emoji_events</mat-icon>
+      </div>
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-6">
+
+      <!-- Campo Email -->
+      <div class="flex flex-col gap-2">
+        <label class="text-[10px] font-bold text-sge-primary uppercase tracking-widest ml-1">Correo Electrónico</label>
+        <input
+          formControlName="email"
+          type="email"
+          placeholder="usuario@sge.com"
+          class="w-full bg-gray-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-sge-primary outline-none transition-all">
+      </div>
+
+      <!-- Campo Password -->
+      <div class="flex flex-col gap-2">
+        <div class="flex justify-between items-center px-1">
+          <label class="text-[10px] font-bold text-sge-primary uppercase tracking-widest">Contraseña</label>
+          <a href="#" class="text-[10px] text-gray-400 hover:text-sge-primary transition-colors italic">¿Olvidó su contraseña?</a>
+        </div>
+        <input
+          formControlName="password"
+          type="password"
+          placeholder="••••••••"
+          class="w-full bg-gray-50 border-none rounded-xl p-4 text-sm focus:ring-2 focus:ring-sge-primary outline-none transition-all">
+      </div>
+
+      <!-- Botón Comenzar -->
+      <button
+        type="submit"
+        [disabled]="loginForm.invalid"
+        class="mt-4 w-full bg-sge-primary hover:bg-sge-navy disabled:bg-gray-300 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-blue-200 active:scale-95">
+        Comenzar <mat-icon class="text-sm">arrow_forward</mat-icon>
+      </button>
+
+    </form>
+
+    <div class="mt-10 text-center">
+      <p class="text-xs text-gray-500">
+        ¿No tiene una cuenta institucional?
+        <span class="text-sge-primary font-bold cursor-pointer hover:underline">Contactar Soporte</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer de Seguridad -->
+  <div class="mt-12 flex items-center gap-2 opacity-30 grayscale">
+    <mat-icon class="text-xs">verified_user</mat-icon>
+    <span class="text-[10px] font-bold uppercase tracking-[0.3em]">Conexión de Alta Seguridad</span>
+  </div>
+
+</div>
