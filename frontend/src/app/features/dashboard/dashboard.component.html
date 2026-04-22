@@ -1,120 +1,154 @@
-<div class="max-w-6xl mx-auto font-sans">
+<div class="max-w-6xl mx-auto font-sans pb-20">
 
-  <!-- Título y Botón Dorado -->
+  <!-- CABECERA PRINCIPAL -->
   <div class="flex justify-between items-start mb-10">
     <div>
-      <h1 class="text-4xl font-black text-slate-800 tracking-tight m-0 uppercase">Gestión de Eventos</h1>
-      <p class="text-gray-500 max-w-md mt-2 leading-relaxed">
-        Administra el escenario de crecimiento profesional. Cada evento es un peldaño hacia la excelencia.
+      <h1 class="text-5xl font-black text-slate-800 tracking-tighter m-0">Gestión de Eventos</h1>
+      <p class="text-gray-500 max-w-xl mt-4 text-sm leading-relaxed font-medium">
+        Administra el escenario de crecimiento profesional. Cada evento es un peldaño hacia la excelencia institucional y el mérito académico.
       </p>
     </div>
-    <button class="bg-sge-achievement text-sge-navy px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:scale-105 transition-all">
-      <mat-icon>verified</mat-icon> Descargar Reporte de Confianza
+    <button class="bg-sge-achievement text-sge-achievement-dark px-6 py-4 rounded-2xl font-bold flex items-center gap-3 shadow-xl shadow-yellow-200/50 hover:brightness-95 transition-all">
+      <mat-icon class="scale-90">verified</mat-icon>
+      <span class="text-sm">Descargar Reporte de Confianza</span>
     </button>
   </div>
 
-  <!-- TARJETAS DE MÉTRICAS -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-    <div class="bg-white p-6 rounded-[2rem] border-l-8 border-sge-primary shadow-sm">
-      <p class="text-[10px] font-bold text-sge-primary uppercase tracking-[0.2em] mb-1">Total Méritos</p>
-      <div class="flex items-baseline gap-2">
-        <span class="text-4xl font-black text-slate-800">148</span>
-        <span class="text-xs font-bold text-green-500">+12%</span>
+  <!-- KPI CARDS (Métricas Superiores) -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+    <div class="bg-white p-8 rounded-[2.5rem] border-l-4 border-sge-primary shadow-[0_10px_40px_rgba(0,0,0,0.03)]">
+      <p class="text-[10px] font-bold text-sge-primary uppercase tracking-[0.2em] mb-2">Total Méritos</p>
+      <div class="flex items-center gap-3">
+        <span class="text-5xl font-black text-slate-800 tracking-tighter">148</span>
+        <span class="text-sm font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-lg">+12%</span>
       </div>
     </div>
 
-    <div class="bg-white p-6 rounded-[2rem] border-l-8 border-sge-achievement shadow-sm">
-      <p class="text-[10px] font-bold text-sge-achievement uppercase tracking-[0.2em] mb-1">Aforo Global</p>
+    <div class="bg-white p-8 rounded-[2.5rem] border-l-4 border-sge-achievement-dark shadow-[0_10px_40px_rgba(0,0,0,0.03)]">
+      <p class="text-[10px] font-bold text-sge-achievement-dark uppercase tracking-[0.2em] mb-2">Aforo Global</p>
       <div class="flex items-baseline gap-2">
-        <span class="text-4xl font-black text-slate-800">2.4k</span>
-        <span class="text-gray-400 text-xs font-medium uppercase">Asistentes</span>
+        <span class="text-5xl font-black text-slate-800 tracking-tighter">2.4k</span>
+        <span class="text-gray-400 text-xs font-bold uppercase tracking-wider">Asistentes</span>
       </div>
     </div>
 
-    <div class="bg-white p-6 rounded-[2rem] border-l-8 border-sge-navy shadow-sm">
-      <p class="text-[10px] font-bold text-sge-navy uppercase tracking-[0.2em] mb-1">Eventos Oro</p>
-      <div class="flex items-center gap-2">
-        <span class="text-4xl font-black text-slate-800">32</span>
-        <mat-icon class="text-sge-achievement">stars</mat-icon>
+    <div class="bg-white p-8 rounded-[2.5rem] border-l-4 border-sge-navy shadow-[0_10px_40px_rgba(0,0,0,0.03)]">
+      <p class="text-[10px] font-bold text-sge-navy uppercase tracking-[0.2em] mb-2">Eventos Oro</p>
+      <div class="flex items-center gap-3">
+        <span class="text-5xl font-black text-slate-800 tracking-tighter">32</span>
+        <mat-icon class="text-sge-achievement-dark scale-150">stars</mat-icon> <!-- Estrellita Dorada Oscura -->
       </div>
     </div>
   </div>
 
-  <!-- TABLA DE EXCELENCIA -->
-  <div class="bg-white rounded-[2.5rem] shadow-xl overflow-hidden border border-gray-100">
-    <div class="p-8 border-b bg-gray-50/50 flex justify-between items-center">
-      <h2 class="flex items-center gap-2 text-lg font-bold text-slate-700 m-0">
-        <mat-icon class="text-sge-primary">shield</mat-icon> Registro Histórico de Excelencia
+  <!-- TABLA DE REGISTRO HISTÓRICO -->
+  <div class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100 mb-12">
+    <div class="p-10 border-b bg-slate-50/30 flex justify-between items-center">
+      <h2 class="flex items-center gap-3 text-xl font-bold text-slate-700 m-0 tracking-tight">
+        <mat-icon class="text-sge-navy">shield</mat-icon> Registro Histórico de Excelencia
       </h2>
-      <div class="flex gap-4 text-gray-400">
+      <div class="flex gap-6 text-slate-400">
         <mat-icon class="cursor-pointer hover:text-sge-primary">filter_list</mat-icon>
         <mat-icon class="cursor-pointer hover:text-sge-primary">search</mat-icon>
       </div>
     </div>
 
-    <!-- 🔑 CORRECCIÓN AQUÍ: Agregamos *matCellDef="let element" en todas las columnas -->
     <table mat-table [dataSource]="eventos()" class="w-full">
 
       <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-widest text-gray-400 font-bold py-6">Evento</th>
-        <td mat-cell *matCellDef="let element" class="py-6">
-          <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-sge-primary">
-              <mat-icon>school</mat-icon>
+        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-[0.15em] text-slate-400 font-black py-8 px-10">Evento</th>
+        <td mat-cell *matCellDef="let element" class="py-8 px-10">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-sge-primary shadow-inner">
+              <mat-icon class="scale-110">school</mat-icon>
             </div>
             <div>
-              <p class="font-bold text-slate-800 m-0 leading-none">{{element.nombre}}</p>
-              <p class="text-[10px] text-gray-400 m-0 mt-1 uppercase tracking-tighter">Categoría: {{element.tipoEvento}}</p>
+              <p class="font-black text-slate-800 m-0 text-base leading-none">{{element.nombre}}</p>
+              <p class="text-[11px] text-slate-400 m-0 mt-2 font-medium">Auditorio Central, Madrid</p>
             </div>
           </div>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="fecha">
-        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-widest text-gray-400 font-bold">Fecha</th>
-        <td mat-cell *matCellDef="let element" class="text-xs font-semibold text-slate-600">
+        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-[0.15em] text-slate-400 font-black">Fecha</th>
+        <td mat-cell *matCellDef="let element" class="text-xs font-bold text-slate-500">
           {{element.fechaEvento | date:'dd MMM, yyyy'}}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="aforo">
-        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-widest text-gray-400 font-bold text-center">Aforo</th>
-        <td mat-cell *matCellDef="let element" class="text-center">
-          <div class="flex flex-col items-center gap-1">
-            <span class="text-xs font-black text-slate-800">{{element.aforoMaximo}}</span>
-            <div class="w-12 h-1 bg-gray-100 rounded-full overflow-hidden">
-              <div class="bg-sge-achievement h-full w-[70%]"></div>
+        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-[0.15em] text-slate-400 font-black">Aforo</th>
+        <td mat-cell *matCellDef="let element">
+          <div class="flex items-center gap-3">
+            <!-- Iconos de aforo oscuros según tu petición -->
+            <div class="flex -space-x-2">
+              <div class="w-5 h-5 rounded-full bg-slate-800 border-2 border-white"></div>
+              <div class="w-5 h-5 rounded-full bg-slate-400 border-2 border-white"></div>
             </div>
+            <span class="text-sm font-black text-sge-achievement-dark">450 / {{element.aforoMaximo}}</span>
           </div>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-widest text-gray-400 font-bold">Estado</th>
+        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-[0.15em] text-slate-400 font-black">Estado</th>
         <td mat-cell *matCellDef="let element">
-          <span class="bg-green-50 text-green-600 border border-green-100 px-3 py-1 rounded-full text-[9px] font-black uppercase flex items-center gap-1 w-fit">
-            <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span> {{element.estado}}
+          <span class="bg-green-100 text-green-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase flex items-center gap-2 w-fit border border-green-200">
+            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> {{element.estado}}
           </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-widest text-gray-400 font-bold">Acciones</th>
+        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-[0.15em] text-slate-400 font-black">Acciones</th>
         <td mat-cell *matCellDef="let element">
-          <button mat-icon-button class="text-gray-300 hover:text-sge-navy">
-            <mat-icon>more_vert</mat-icon>
-          </button>
+          <button mat-icon-button class="text-slate-300 hover:text-sge-navy"><mat-icon>more_vert</mat-icon></button>
         </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50/50 transition-colors"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-slate-50/80 transition-all cursor-pointer"></tr>
     </table>
 
-    <!-- Mensaje si no hay datos -->
-    <div *ngIf="eventos().length === 0" class="p-20 text-center">
-      <mat-icon class="text-gray-200 scale-[3] mb-4">event_busy</mat-icon>
-      <p class="text-gray-400 font-medium">No hay eventos registrados en la base de datos.</p>
+    <!-- PAGINACIÓN (Fiel a Figma) -->
+    <div class="p-8 bg-slate-50/20 border-t flex justify-between items-center text-[11px] font-bold text-slate-400">
+      <p>Mostrando 3 de 42 eventos de prestigio</p>
+      <div class="flex items-center gap-6">
+        <span class="cursor-pointer hover:text-sge-primary">Anterior</span>
+        <div class="flex gap-2">
+          <span class="w-8 h-8 flex items-center justify-center bg-blue-100 text-sge-primary rounded-lg">1</span>
+          <span class="w-8 h-8 flex items-center justify-center hover:bg-slate-100 rounded-lg cursor-pointer">2</span>
+        </div>
+        <span class="cursor-pointer hover:text-sge-primary">Siguiente</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARDS INFERIORES -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-50 relative overflow-hidden">
+      <h3 class="text-2xl font-black text-slate-800 mb-4">Garantía de Excelencia</h3>
+      <p class="text-slate-500 text-sm leading-relaxed mb-6">
+        Todos los eventos en SGE cumplen con los más altos estándares de auditoría de mérito institucional. Su gestión refleja el prestigio de nuestra red.
+      </p>
+      <a href="#" class="text-sge-primary font-black text-sm no-underline flex items-center gap-2 hover:gap-4 transition-all">
+        Ver normas de calidad <mat-icon class="scale-75">arrow_forward</mat-icon>
+      </a>
+      <!-- Decoración fondo -->
+      <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-slate-50 rounded-full opacity-50"></div>
+    </div>
+
+    <div class="bg-sge-navy p-10 rounded-[3rem] shadow-2xl relative overflow-hidden text-white">
+      <h3 class="text-2xl font-black mb-4">Impacto Profesional</h3>
+      <p class="text-white/70 text-sm leading-relaxed mb-8">
+        Hemos certificado a más de 12,000 profesionales a través de estos encuentros. El crecimiento no es una opción, es nuestro legado.
+      </p>
+      <button class="bg-white text-sge-navy px-8 py-3 rounded-2xl font-black text-sm hover:scale-105 transition-all shadow-xl">
+        Expandir impacto
+      </button>
+      <!-- Icono de fondo tipo marca de agua -->
+      <mat-icon class="absolute top-10 right-10 scale-[5] opacity-10 rotate-12">auto_awesome</mat-icon>
     </div>
   </div>
 </div>

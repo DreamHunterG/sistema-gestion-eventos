@@ -10,6 +10,7 @@ module.exports = {
         'sge-navy': '#005CAD',
         'sge-sky': '#1DB6F2',
         'sge-achievement': '#F3E742',
+        'sge-achievement-dark': '#666000',
         'sge-bg': '#F2F2F2',
       }
     },
