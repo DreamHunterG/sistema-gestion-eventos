@@ -1,0 +1,16 @@
+// Aseguramos que el contenedor ocupe todo el espacio disponible
+mat-sidenav-container {
+  height: 100%;
+}
+
+mat-sidenav {
+  // Sombra elegante para el menú azul (profundidad visual de Figma)
+  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+}
+
+// Estilo para los links activos (Gamificación: resalta donde estás parado)
+.active-link {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #F3E742 !important; // Tu amarillo de logro
+  border-left: 4px solid #F3E742;
+}

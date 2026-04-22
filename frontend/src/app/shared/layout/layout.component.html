@@ -1,0 +1,103 @@
+<!-- 1. CONTENEDOR RAÍZ -->
+<div class="flex h-screen bg-[#F8FAFC] font-sans">
+
+  <!-- 2. SIDEBAR (Navegación Lateral Izquierda) -->
+  <aside class="w-64 bg-white border-r flex flex-col justify-between p-6 shadow-sm z-20 shrink-0">
+    <div>
+      <!-- Identidad / Logo -->
+      <div class="flex items-center gap-3 mb-10">
+        <div class="w-10 h-10 bg-sge-navy rounded-lg flex items-center justify-center text-white font-black italic shadow-md">
+          E
+        </div>
+        <div>
+          <h2 class="text-sge-navy font-bold text-sm leading-tight">Tu Evento</h2>
+          <p class="text-gray-400 text-[10px] uppercase tracking-widest font-semibold">Plataforma SGE</p>
+        </div>
+      </div>
+
+      <!-- Menú de Funcionalidades -->
+      <nav class="flex flex-col gap-1">
+        <a routerLink="/dashboard" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
+           class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
+          <mat-icon class="scale-90">dashboard</mat-icon>
+          <span class="text-sm">Dashboard</span>
+        </a>
+
+        <a routerLink="/eventos" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
+           class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
+          <mat-icon class="scale-90">event</mat-icon>
+          <span class="text-sm">Eventos</span>
+        </a>
+
+        <a routerLink="/importar" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
+           class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
+          <mat-icon class="scale-90">cloud_upload</mat-icon>
+          <span class="text-sm">Carga Masiva</span>
+        </a>
+
+        <a routerLink="/usuarios" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
+           class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
+          <mat-icon class="scale-90">groups</mat-icon>
+          <span class="text-sm">Usuarios</span>
+        </a>
+
+        <a routerLink="/asistencia" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
+           class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
+          <mat-icon class="scale-90">assignment_turned_in</mat-icon>
+          <span class="text-sm">Asistencia</span>
+        </a>
+
+        <a routerLink="/verificacion" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
+           class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
+          <mat-icon class="scale-90">qr_code_scanner</mat-icon>
+          <span class="text-sm">Verificación</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Sección Inferior (Botón y Logout) -->
+    <div>
+      <button class="w-full bg-sge-primary hover:bg-sge-navy text-white py-3 rounded-xl font-bold text-xs shadow-lg shadow-blue-100 mb-6 active:scale-95 transition-all uppercase tracking-wider">
+        Solicitar Recompensa
+      </button>
+
+      <div class="flex flex-col gap-4 text-gray-400 px-2">
+        <a href="#" class="flex items-center gap-2 text-[11px] no-underline text-inherit hover:text-sge-primary transition-colors">
+          <mat-icon class="text-sm">help_outline</mat-icon> Ayuda
+        </a>
+        <a (click)="logout()" class="flex items-center gap-2 text-[11px] no-underline text-inherit cursor-pointer hover:text-red-500 transition-colors">
+          <mat-icon class="text-sm">logout</mat-icon> Cerrar Sesión
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 3. ÁREA DE CONTENIDO (Derecha) -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Barra Superior (Top Nav) -->
+    <header class="h-16 bg-white border-b flex items-center justify-between px-10 shrink-0">
+      <div class="flex gap-6 text-[11px] font-bold uppercase tracking-widest items-center">
+        <span class="text-sge-primary">SGE Pro</span>
+        <div class="w-[1px] h-4 bg-gray-200"></div>
+        <span class="text-gray-300">Dashboard</span>
+        <span class="text-gray-300">Eventos</span>
+        <span class="text-gray-300">Verificación</span>
+      </div>
+
+      <!-- Avatar Usuario -->
+      <div class="flex items-center gap-3">
+        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Administrador</span>
+        <div class="w-9 h-9 bg-gray-100 rounded-full overflow-hidden border-2 border-white shadow-sm">
+          <img src="https://ui-avatars.com/api/?name=Admin" alt="avatar">
+        </div>
+      </div>
+    </header>
+
+    <!-- Zona de Renderizado de Páginas -->
+    <div class="flex-1 overflow-y-auto p-10">
+      <router-outlet></router-outlet>
+    </div>
+
+  </main>
+</div>
