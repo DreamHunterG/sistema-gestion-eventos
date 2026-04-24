@@ -30,7 +30,7 @@ export class DashboardComponent implements OnInit {
   private eventoService = inject(EventoService);
   private snackBar = inject(MatSnackBar);
 
-  // --- ESTADOS ---
+  // --- ESTADOS DE DATOS ---
   eventos = signal<Evento[]>([]);
   showFilters = signal(false);
   isFormVisible = signal(false);
@@ -38,20 +38,22 @@ export class DashboardComponent implements OnInit {
   isUploading = signal(false);
   currentPage = signal(1);
 
-  // --- FILTROS ---
+  // --- 🔑 FILTROS AVANZADOS (Sincronizados con los Labels del HTML) ---
   searchName = signal('');
+  searchAforo = signal<number | null>(null);
   filterTipo = signal('');
   filterModalidad = signal('');
-  filterAforoMin = signal<number | null>(null);
   dateStart = signal('');
   dateEnd = signal('');
 
+  // --- OBJETO PARA CRUD ---
   currentEvento: Evento = this.initEvento();
 
-  // --- MOTOR DE FILTRADO ---
+  // --- MOTOR DE FILTRADO DINÁMICO ---
   filteredEventos = computed(() => {
     return this.eventos().filter(e => {
       const matchName = e.nombre.toLowerCase().includes(this.searchName().toLowerCase());
+      const matchAforo = this.searchAforo() !== null ? e.aforoMaximo >= this.searchAforo()! : true;
       const matchTipo = this.filterTipo() ? e.tipoEvento === this.filterTipo() : true;
       const matchMod = this.filterModalidad() ? e.modalidad === this.filterModalidad() : true;
 
@@ -62,7 +64,7 @@ export class DashboardComponent implements OnInit {
         const eventDate = new Date(e.fechaEvento).getTime();
         matchDate = eventDate >= start && eventDate <= end;
       }
-      return matchName && matchTipo && matchMod && matchDate;
+      return matchName && matchAforo && matchTipo && matchMod && matchDate;
     });
   });
 
@@ -99,11 +101,14 @@ export class DashboardComponent implements OnInit {
     this.isEditing.set(true);
     this.currentEvento = { ...evento };
     this.isFormVisible.set(true);
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    // Scroll automático para ver el formulario
+    setTimeout(() => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }, 100);
   }
 
   onArchivar(id: number | undefined) {
-    if (!id || !confirm('¿Desea cambiar el estado?')) return;
+    if (!id || !confirm('¿Desea cambiar el estado de disponibilidad?')) return;
     this.eventoService.archivarEvento(id).subscribe(() => {
       this.notificar('Estado actualizado', 'success');
       this.cargarEventos();
@@ -123,7 +128,14 @@ export class DashboardComponent implements OnInit {
   }
 
   private initEvento(): Evento {
-    return { nombre: '', fechaEvento: '', aforoMaximo: 0, tipoEvento: 'CAPACITACION', modalidad: 'PRESENCIAL', estado: 'ACTIVO' };
+    return {
+      nombre: '',
+      fechaEvento: '',
+      aforoMaximo: 0,
+      tipoEvento: 'CAPACITACION',
+      modalidad: 'PRESENCIAL',
+      estado: 'ACTIVO'
+    };
   }
 
   private notificar(msg: string, tipo: string) {

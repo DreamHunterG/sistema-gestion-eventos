@@ -1,6 +1,6 @@
 <div class="max-w-7xl mx-auto font-sans pb-20 animate-in p-6 bg-[#F2F2F2] min-h-screen">
 
-  <!-- Header del Sistema (Estilo Figma) -->
+  <!-- Header -->
   <header class="max-w-7xl mx-auto mb-12">
     <h1 class="text-[42px] font-black text-slate-800 tracking-tight mb-2 uppercase">Gestión de Eventos</h1>
     <p class="text-gray-500 font-medium text-lg italic">Administra el escenario de crecimiento profesional y el mérito académico.</p>
@@ -53,20 +53,6 @@
       </div>
     </div>
 
-    <!-- PANEL DE FILTROS -->
-    @if (showFilters()) {
-      <div class="bg-white p-8 border-b grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-in">
-        <input type="text" [ngModel]="searchName()" (ngModelChange)="searchName.set($event)" placeholder="Buscar evento..." class="filter-input">
-        <select [ngModel]="filterTipo()" (ngModelChange)="filterTipo.set($event)" class="filter-input">
-          <option value="">Todos los tipos</option>
-          <option value="TORNEO">🏆 Torneo</option>
-          <option value="CAPACITACION">📖 Capacitación</option>
-        </select>
-        <input type="date" [ngModel]="dateStart()" (ngModelChange)="dateStart.set($event)" class="filter-input">
-        <input type="date" [ngModel]="dateEnd()" (ngModelChange)="dateEnd.set($event)" class="filter-input">
-      </div>
-    }
-
     <table mat-table [dataSource]="filteredEventos()" class="w-full">
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef class="py-8 px-10 text-[10px] font-black text-slate-400 uppercase">Evento</th>
@@ -76,8 +62,8 @@
               <mat-icon>{{ getIcon(element.tipoEvento) }}</mat-icon>
             </div>
             <div>
-              <p class="font-black text-slate-800 m-0 text-base">{{element.nombre}}</p>
-              <p class="text-[10px] text-gray-400 font-bold uppercase">{{element.tipoEvento}}</p>
+              <p class="font-black text-slate-800 m-0 text-base leading-none">{{element.nombre}}</p>
+              <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{{element.tipoEvento}}</p>
             </div>
           </div>
         </td>
@@ -86,21 +72,21 @@
       <ng-container matColumnDef="modalidad">
         <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase">Modalidad</th>
         <td mat-cell *matCellDef="let element">
-          <span class="text-[10px] font-bold px-3 py-1 bg-slate-100 rounded-lg text-slate-500 uppercase">
+          <span class="text-[10px] font-bold px-3 py-1 bg-slate-100 rounded-lg text-slate-500 uppercase italic">
             {{ element.modalidad }}
           </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="fecha">
-        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase">Fecha</th>
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase">Fecha y Hora</th>
         <td mat-cell *matCellDef="let element" class="text-xs font-bold text-slate-500">
-          {{element.fechaEvento | date:'dd MMM, yyyy'}}
+          {{element.fechaEvento | date:'dd MMM, yyyy | HH:mm'}}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="aforo">
-        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase">Aforo</th>
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase">Aforo Real</th>
         <td mat-cell *matCellDef="let element">
           <span class="text-sm font-black text-[#666000]">
             {{element.totalAsistentes || 0}} / {{element.aforoMaximo}}
@@ -111,7 +97,7 @@
       <ng-container matColumnDef="estado">
         <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase text-center">Estado</th>
         <td mat-cell *matCellDef="let element" class="text-center">
-          <span [class]="element.estado === 'ACTIVO' ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'" class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase">
+          <span [class]="element.estado === 'ACTIVO' ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'" class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase shadow-sm">
             {{element.estado}}
           </span>
         </td>
@@ -130,7 +116,7 @@
     </table>
 
     <footer class="p-8 border-t flex justify-between items-center bg-white/50">
-      <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Página {{currentPage()}}</span>
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-widest italic">Página {{currentPage()}}</span>
       <div class="flex items-center gap-4">
         <button class="pagination-btn">Anterior</button>
         <span class="w-8 h-8 flex items-center justify-center bg-blue-100 text-[#005CAD] rounded-lg font-black text-xs shadow-sm">1</span>
@@ -139,7 +125,47 @@
     </footer>
   </div>
 
-  <!-- 3. BOTÓN CREAR NUEVO (Centrado según petición) -->
+  <!-- 3. PANEL DE FILTROS BENTO (HU-12, RF-06) -->
+  @if (showFilters()) {
+    <div class="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-100 mb-12 animate-in">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 items-end">
+        <div class="flex flex-col gap-2">
+          <label class="text-[9px] font-black text-[#0583F2] uppercase ml-1">Nombre Evento</label>
+          <input type="text" [ngModel]="searchName()" (ngModelChange)="searchName.set($event)" placeholder="Ej: Torneo..." class="filter-input">
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-[9px] font-black text-[#0583F2] uppercase ml-1">Aforo Sugerido</label>
+          <input type="number" [ngModel]="searchAforo()" (ngModelChange)="searchAforo.set($event)" placeholder="Ej: 50" class="filter-input">
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-[9px] font-black text-[#0583F2] uppercase ml-1">Categoría</label>
+          <select [ngModel]="filterTipo()" (ngModelChange)="filterTipo.set($event)" class="filter-input">
+            <option value="">Todas</option>
+            <option value="TORNEO">🏆 Torneo</option>
+            <option value="CAPACITACION">📖 Capacitación</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-[9px] font-black text-[#0583F2] uppercase ml-1">Modalidad</label>
+          <select [ngModel]="filterModalidad()" (ngModelChange)="filterModalidad.set($event)" class="filter-input">
+            <option value="">Ambas</option>
+            <option value="PRESENCIAL">📍 Presencial</option>
+            <option value="VIRTUAL">🌐 Virtual</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-[9px] font-black text-[#0583F2] uppercase ml-1">Fecha de Inicio</label>
+          <input type="date" [ngModel]="dateStart()" (ngModelChange)="dateStart.set($event)" class="filter-input">
+        </div>
+        <div class="flex flex-col gap-2">
+          <label class="text-[9px] font-black text-[#0583F2] uppercase ml-1">Fecha de Cierre</label>
+          <input type="date" [ngModel]="dateEnd()" (ngModelChange)="dateEnd.set($event)" class="filter-input">
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- 4. BOTÓN CREAR NUEVO (Centrado según petición) -->
   <div class="flex justify-center mb-16">
     <button (click)="toggleForm()" class="bg-[#001C3B] text-white px-20 py-7 rounded-[2.5rem] shadow-2xl flex items-center gap-4 hover:scale-105 transition-all group">
       <mat-icon class="scale-150 transition-transform group-hover:rotate-90">{{ isFormVisible() ? 'close' : 'add' }}</mat-icon>
@@ -147,43 +173,61 @@
     </button>
   </div>
 
-  <!-- 4. FORMULARIO CRUD -->
+  <!-- 5. FORMULARIO CRUD (Sincronizado con todos los campos de la tabla) -->
   @if (isFormVisible()) {
     <div class="bg-white p-12 rounded-[4rem] shadow-2xl border-b-[20px] border-[#005CAD] mb-16 animate-in">
-      <h2 class="text-2xl font-black text-[#005CAD] mb-8 uppercase italic tracking-tighter">
-        <mat-icon class="mr-2">auto_awesome</mat-icon> {{ isEditing() ? 'Actualizar Información' : 'Nuevo Registro de Excelencia' }}
+      <h2 class="text-3xl font-black text-[#005CAD] mb-10 uppercase italic tracking-tighter flex items-center gap-3">
+        <mat-icon class="scale-125">auto_awesome</mat-icon>
+        {{ isEditing() ? 'Actualizar Evento' : 'Añadir Nuevo Evento' }}
       </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-end">
-        <input [(ngModel)]="currentEvento.nombre" placeholder="Nombre del Evento" class="filter-input !bg-slate-50 font-bold">
-        <input [(ngModel)]="currentEvento.fechaEvento" type="datetime-local" class="filter-input !bg-slate-50">
-        <input [(ngModel)]="currentEvento.aforoMaximo" type="number" placeholder="Capacidad" class="filter-input !bg-slate-50">
-        <select [(ngModel)]="currentEvento.tipoEvento" class="filter-input !bg-slate-50 font-black text-sge-navy">
-          <option value="CAPACITACION">CAPACITACIÓN</option>
-          <option value="TORNEO">TORNEO</option>
-          <option value="TALLER">TALLER</option>
-        </select>
-        <button (click)="onSave()" [disabled]="isUploading()" class="bg-[#005CAD] text-white h-[58px] rounded-2xl font-black shadow-xl hover:bg-[#001C3B] transition-all">
-          {{ isUploading() ? '...' : 'CONFIRMAR' }}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div class="flex flex-col gap-3">
+          <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Nombre del Evento</label>
+          <input [(ngModel)]="currentEvento.nombre" placeholder="Nombre descriptivo" class="filter-input !bg-slate-50 font-bold text-slate-700">
+        </div>
+        <div class="flex flex-col gap-3">
+          <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Cronograma</label>
+          <input [(ngModel)]="currentEvento.fechaEvento" type="datetime-local" class="filter-input !bg-slate-50">
+        </div>
+        <div class="flex flex-col gap-3">
+          <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Capacidad Autorizada</label>
+          <input [(ngModel)]="currentEvento.aforoMaximo" type="number" class="filter-input !bg-slate-50">
+        </div>
+        <div class="flex flex-col gap-3">
+          <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Categoría</label>
+          <select [(ngModel)]="currentEvento.tipoEvento" class="filter-input !bg-slate-50 font-black text-[#005CAD]">
+            <option value="CAPACITACION">CAPACITACIÓN</option>
+            <option value="TORNEO">TORNEO</option>
+            <option value="TALLER">TALLER</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-3">
+          <label class="text-[10px] font-black text-gray-400 uppercase ml-1">Modalidad</label>
+          <select [(ngModel)]="currentEvento.modalidad" class="filter-input !bg-slate-50 font-black text-[#005CAD]">
+            <option value="PRESENCIAL">PRESENCIAL</option>
+            <option value="VIRTUAL">VIRTUAL</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-center mt-12">
+        <button (click)="onSave()" [disabled]="isUploading()" class="bg-[#005CAD] text-white px-20 py-5 rounded-2xl font-black text-xl hover:bg-[#001C3B] transition-all shadow-xl disabled:opacity-50">
+          {{ isUploading() ? 'VALIDANDO...' : (isEditing() ? 'ACTUALIZAR REGISTRO' : 'CONFIRMAR Y GUARDAR') }}
         </button>
       </div>
     </div>
   }
 
-  <!-- 5. CARDS DE IMPACTO (Una al lado de la otra) -->
+  <!-- 6. CARDS DE IMPACTO FINAL -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
     <div class="bg-white p-14 rounded-[3.5rem] shadow-sm border border-slate-50 relative overflow-hidden group">
       <h3 class="text-3xl font-black text-slate-800 mb-6 tracking-tight">Garantía de Excelencia</h3>
-      <p class="text-slate-500 text-base leading-relaxed mb-10 font-medium">Todos los eventos en SGE cumplen con los más altos estándares de auditoría institucional. Su gestión refleja prestigio.</p>
-      <button class="text-[#0583F2] font-black text-sm flex items-center gap-2 uppercase tracking-widest hover:gap-4 transition-all">
-        Ver normas <mat-icon class="scale-75">arrow_forward</mat-icon>
-      </button>
-      <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-50 rounded-full opacity-30"></div>
+      <p class="text-slate-500 text-base leading-relaxed mb-10 font-medium">Todos los eventos en SGE cumplen con los más altos estándares de auditoría institucional (ISO 25010).</p>
+      <button class="text-[#0583F2] font-black text-sm flex items-center gap-2 uppercase tracking-widest hover:gap-4 transition-all">Ver normas <mat-icon class="scale-75">arrow_forward</mat-icon></button>
     </div>
 
     <div class="bg-[#005CAD] p-14 rounded-[3.5rem] shadow-2xl relative overflow-hidden text-white">
       <h3 class="text-3xl font-black mb-6 tracking-tight">Impacto Profesional</h3>
-      <p class="text-white/70 text-base leading-relaxed mb-10 font-light italic">Hemos certificado a miles de profesionales. El crecimiento no es una opción, es nuestro legado institucional.</p>
-      <button class="bg-white text-[#005CAD] px-10 py-4 rounded-2xl font-black text-sm uppercase hover:scale-105 transition-all">Expandir impacto</button>
+      <p class="text-white/70 text-base leading-relaxed mb-10 font-light italic">"Hemos certificado a miles de profesionales. El crecimiento no es una opción, es nuestro legado institucional."</p>
       <mat-icon class="absolute top-0 right-0 scale-[8] opacity-10 rotate-12 text-white">stars</mat-icon>
     </div>
   </div>
