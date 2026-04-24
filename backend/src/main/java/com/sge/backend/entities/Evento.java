@@ -1,20 +1,17 @@
 package com.sge.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import jakarta.persistence.*;
 
-/**
- * Entidad que representa los Eventos (Capacitaciones, Talleres o Torneos).
- * Vinculada a HU-05 (Creación) y RF-02 (Gestión Multimodal).
- */
 @Entity
 @Table(name = "eventos")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Evento {
 
     @Id
@@ -30,42 +27,35 @@ public class Evento {
     @Column(name = "aforo_maximo", nullable = false)
     private Integer aforoMaximo;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) // 🔑 INDISPENSABLE
     @Column(name = "tipo_evento", nullable = false, length = 50)
-    private TipoEvento tipoEvento;
+    private TipoEvento tipoEvento = TipoEvento.CAPACITACION;
 
-    @Enumerated(EnumType.STRING) // Guarda el texto (ACTIVO/INACTIVO) en la DB
+    @Enumerated(EnumType.STRING) // 🔑 INDISPENSABLE
+    @Column(nullable = false, length = 20)
+    private Modalidad modalidad = Modalidad.PRESENCIAL;
+
+    @Enumerated(EnumType.STRING) // 🔑 INDISPENSABLE
     @Column(length = 20)
-    private EstadoEvento estado = EstadoEvento.ACTIVO; // Valor por defecto
-
-    /**
-     * Definición de los estados permitidos (Enum)
-     */
-    public enum EstadoEvento {
-        ACTIVO,
-        INACTIVO
-    }
+    private EstadoEvento estado = EstadoEvento.ACTIVO;
 
     @Column(name = "creado_at", updatable = false)
     private LocalDateTime creadoAt;
 
-    // RELACIÓN: Muchos eventos son creados por un Usuario (Admin)
+    @Transient // Para el conteo dinámico que pide Angular
+    private Integer totalAsistentes;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_creador")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Usuario creador;
 
-    // Método automático para poner la fecha de creación antes de guardar .now -> indica hora actual
     @PrePersist
     protected void onCreate() {
         this.creadoAt = LocalDateTime.now();
     }
 
-    /**
-     * Categorías de eventos admitidas por el sistema.
-     */
-    public enum TipoEvento {
-        CAPACITACION,
-        TALLER,
-        TORNEO
-    }
+    public enum EstadoEvento { ACTIVO, INACTIVO }
+    public enum TipoEvento { CAPACITACION, TALLER, TORNEO }
+    public enum Modalidad { PRESENCIAL, VIRTUAL }
 }

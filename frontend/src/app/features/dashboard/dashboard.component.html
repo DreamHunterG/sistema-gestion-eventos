@@ -1,154 +1,191 @@
-<div class="max-w-6xl mx-auto font-sans pb-20">
+<div class="max-w-7xl mx-auto font-sans pb-20 animate-in p-6 bg-[#F2F2F2] min-h-screen">
 
-  <!-- CABECERA PRINCIPAL -->
-  <div class="flex justify-between items-start mb-10">
-    <div>
-      <h1 class="text-5xl font-black text-slate-800 tracking-tighter m-0">Gestión de Eventos</h1>
-      <p class="text-gray-500 max-w-xl mt-4 text-sm leading-relaxed font-medium">
-        Administra el escenario de crecimiento profesional. Cada evento es un peldaño hacia la excelencia institucional y el mérito académico.
-      </p>
-    </div>
-    <button class="bg-sge-achievement text-sge-achievement-dark px-6 py-4 rounded-2xl font-bold flex items-center gap-3 shadow-xl shadow-yellow-200/50 hover:brightness-95 transition-all">
-      <mat-icon class="scale-90">verified</mat-icon>
-      <span class="text-sm">Descargar Reporte de Confianza</span>
-    </button>
-  </div>
+  <!-- Header del Sistema (Estilo Figma) -->
+  <header class="max-w-7xl mx-auto mb-12">
+    <h1 class="text-[42px] font-black text-slate-800 tracking-tight mb-2 uppercase">Gestión de Eventos</h1>
+    <p class="text-gray-500 font-medium text-lg italic">Administra el escenario de crecimiento profesional y el mérito académico.</p>
+  </header>
 
-  <!-- KPI CARDS (Métricas Superiores) -->
+  <!-- 1. KPI CARDS -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-    <div class="bg-white p-8 rounded-[2.5rem] border-l-4 border-sge-primary shadow-[0_10px_40px_rgba(0,0,0,0.03)]">
-      <p class="text-[10px] font-bold text-sge-primary uppercase tracking-[0.2em] mb-2">Total Méritos</p>
+    <div class="bg-white p-8 rounded-[2.5rem] border-l-8 border-[#0583F2] shadow-sm">
+      <p class="text-[10px] font-bold text-[#0583F2] uppercase tracking-[0.2em] mb-2">Eventos Totales</p>
       <div class="flex items-center gap-3">
-        <span class="text-5xl font-black text-slate-800 tracking-tighter">148</span>
-        <span class="text-sm font-bold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-lg">+12%</span>
+        <span class="text-5xl font-black text-slate-800 tracking-tighter">{{eventos().length}}</span>
+        <span class="text-xs font-bold text-blue-500 bg-blue-50 px-3 py-1 rounded-lg">Vigentes</span>
       </div>
     </div>
 
-    <div class="bg-white p-8 rounded-[2.5rem] border-l-4 border-sge-achievement-dark shadow-[0_10px_40px_rgba(0,0,0,0.03)]">
-      <p class="text-[10px] font-bold text-sge-achievement-dark uppercase tracking-[0.2em] mb-2">Aforo Global</p>
+    <div class="bg-white p-8 rounded-[2.5rem] border-l-8 border-[#F3E742] shadow-sm">
+      <p class="text-[10px] font-bold text-[#666000] uppercase tracking-[0.2em] mb-2">Asistencia Global</p>
       <div class="flex items-baseline gap-2">
-        <span class="text-5xl font-black text-slate-800 tracking-tighter">2.4k</span>
-        <span class="text-gray-400 text-xs font-bold uppercase tracking-wider">Asistentes</span>
+        <span class="text-5xl font-black text-slate-800 tracking-tighter">100%</span>
+        <span class="text-gray-400 text-xs font-bold uppercase tracking-wider">Validado</span>
       </div>
     </div>
 
-    <div class="bg-white p-8 rounded-[2.5rem] border-l-4 border-sge-navy shadow-[0_10px_40px_rgba(0,0,0,0.03)]">
-      <p class="text-[10px] font-bold text-sge-navy uppercase tracking-[0.2em] mb-2">Eventos Oro</p>
+    <div class="bg-white p-8 rounded-[2.5rem] border-l-8 border-[#005CAD] shadow-sm">
+      <p class="text-[10px] font-bold text-[#005CAD] uppercase tracking-[0.2em] mb-2">Reconocimientos</p>
       <div class="flex items-center gap-3">
-        <span class="text-5xl font-black text-slate-800 tracking-tighter">32</span>
-        <mat-icon class="text-sge-achievement-dark scale-150">stars</mat-icon> <!-- Estrellita Dorada Oscura -->
+        <span class="text-5xl font-black text-slate-800 tracking-tighter">{{eventos().length}}</span>
+        <mat-icon class="text-[#F3E742] scale-150">stars</mat-icon>
       </div>
     </div>
   </div>
 
-  <!-- TABLA DE REGISTRO HISTÓRICO -->
-  <div class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-100 mb-12">
-    <div class="p-10 border-b bg-slate-50/30 flex justify-between items-center">
-      <h2 class="flex items-center gap-3 text-xl font-bold text-slate-700 m-0 tracking-tight">
-        <mat-icon class="text-sge-navy">shield</mat-icon> Registro Histórico de Excelencia
-      </h2>
-      <div class="flex gap-6 text-slate-400">
-        <mat-icon class="cursor-pointer hover:text-sge-primary">filter_list</mat-icon>
-        <mat-icon class="cursor-pointer hover:text-sge-primary">search</mat-icon>
+  <!-- 2. TABLA PRINCIPAL -->
+  <div class="bg-white rounded-[3.5rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-50 mb-12">
+    <div class="p-10 border-b bg-slate-50/20 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <div class="bg-[#005CAD] p-3 rounded-2xl shadow-inner">
+          <mat-icon class="text-white">shield</mat-icon>
+        </div>
+        <h2 class="text-xl font-bold text-slate-700 m-0 tracking-tight">Registro Histórico de Excelencia</h2>
+      </div>
+
+      <div class="flex gap-3">
+        <button (click)="showFilters.set(!showFilters())" class="bg-slate-100 text-slate-500 px-6 py-3 rounded-2xl font-black text-xs hover:bg-slate-200 transition-all">
+          <mat-icon class="scale-75">tune</mat-icon> {{ showFilters() ? 'CERRAR FILTROS' : 'FILTROS' }}
+        </button>
+        <button class="bg-[#F3E742] text-[#666000] px-6 py-3 rounded-2xl font-black text-xs flex items-center gap-2 shadow-lg hover:scale-105 transition-all">
+          <mat-icon class="scale-75">verified</mat-icon> REPORTE
+        </button>
       </div>
     </div>
 
-    <table mat-table [dataSource]="eventos()" class="w-full">
+    <!-- PANEL DE FILTROS -->
+    @if (showFilters()) {
+      <div class="bg-white p-8 border-b grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 animate-in">
+        <input type="text" [ngModel]="searchName()" (ngModelChange)="searchName.set($event)" placeholder="Buscar evento..." class="filter-input">
+        <select [ngModel]="filterTipo()" (ngModelChange)="filterTipo.set($event)" class="filter-input">
+          <option value="">Todos los tipos</option>
+          <option value="TORNEO">🏆 Torneo</option>
+          <option value="CAPACITACION">📖 Capacitación</option>
+        </select>
+        <input type="date" [ngModel]="dateStart()" (ngModelChange)="dateStart.set($event)" class="filter-input">
+        <input type="date" [ngModel]="dateEnd()" (ngModelChange)="dateEnd.set($event)" class="filter-input">
+      </div>
+    }
 
+    <table mat-table [dataSource]="filteredEventos()" class="w-full">
       <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-[0.15em] text-slate-400 font-black py-8 px-10">Evento</th>
-        <td mat-cell *matCellDef="let element" class="py-8 px-10">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-sge-primary shadow-inner">
-              <mat-icon class="scale-110">school</mat-icon>
+        <th mat-header-cell *matHeaderCellDef class="py-8 px-10 text-[10px] font-black text-slate-400 uppercase">Evento</th>
+        <td mat-cell *matCellDef="let element" class="py-6 px-10">
+          <div class="flex items-center gap-5">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center bg-blue-50 text-[#0583F2]">
+              <mat-icon>{{ getIcon(element.tipoEvento) }}</mat-icon>
             </div>
             <div>
-              <p class="font-black text-slate-800 m-0 text-base leading-none">{{element.nombre}}</p>
-              <p class="text-[11px] text-slate-400 m-0 mt-2 font-medium">Auditorio Central, Madrid</p>
+              <p class="font-black text-slate-800 m-0 text-base">{{element.nombre}}</p>
+              <p class="text-[10px] text-gray-400 font-bold uppercase">{{element.tipoEvento}}</p>
             </div>
           </div>
         </td>
       </ng-container>
 
+      <ng-container matColumnDef="modalidad">
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase">Modalidad</th>
+        <td mat-cell *matCellDef="let element">
+          <span class="text-[10px] font-bold px-3 py-1 bg-slate-100 rounded-lg text-slate-500 uppercase">
+            {{ element.modalidad }}
+          </span>
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="fecha">
-        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-[0.15em] text-slate-400 font-black">Fecha</th>
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase">Fecha</th>
         <td mat-cell *matCellDef="let element" class="text-xs font-bold text-slate-500">
           {{element.fechaEvento | date:'dd MMM, yyyy'}}
         </td>
       </ng-container>
 
       <ng-container matColumnDef="aforo">
-        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-[0.15em] text-slate-400 font-black">Aforo</th>
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase">Aforo</th>
         <td mat-cell *matCellDef="let element">
-          <div class="flex items-center gap-3">
-            <!-- Iconos de aforo oscuros según tu petición -->
-            <div class="flex -space-x-2">
-              <div class="w-5 h-5 rounded-full bg-slate-800 border-2 border-white"></div>
-              <div class="w-5 h-5 rounded-full bg-slate-400 border-2 border-white"></div>
-            </div>
-            <span class="text-sm font-black text-sge-achievement-dark">450 / {{element.aforoMaximo}}</span>
-          </div>
+          <span class="text-sm font-black text-[#666000]">
+            {{element.totalAsistentes || 0}} / {{element.aforoMaximo}}
+          </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="estado">
-        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-[0.15em] text-slate-400 font-black">Estado</th>
-        <td mat-cell *matCellDef="let element">
-          <span class="bg-green-100 text-green-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase flex items-center gap-2 w-fit border border-green-200">
-            <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> {{element.estado}}
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase text-center">Estado</th>
+        <td mat-cell *matCellDef="let element" class="text-center">
+          <span [class]="element.estado === 'ACTIVO' ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100'" class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase">
+            {{element.estado}}
           </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="acciones">
-        <th mat-header-cell *matHeaderCellDef class="uppercase text-[10px] tracking-[0.15em] text-slate-400 font-black">Acciones</th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-icon-button class="text-slate-300 hover:text-sge-navy"><mat-icon>more_vert</mat-icon></button>
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 text-center pr-10">Acciones</th>
+        <td mat-cell *matCellDef="let element" class="text-center pr-10">
+          <button (click)="onEdit(element)" mat-icon-button class="text-[#0583F2]"><mat-icon>edit</mat-icon></button>
+          <button (click)="onArchivar(element.id)" mat-icon-button class="text-slate-300 hover:text-red-500"><mat-icon>archive</mat-icon></button>
         </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-slate-50/80 transition-all cursor-pointer"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-slate-50 transition-all border-b border-slate-50/50"></tr>
     </table>
 
-    <!-- PAGINACIÓN (Fiel a Figma) -->
-    <div class="p-8 bg-slate-50/20 border-t flex justify-between items-center text-[11px] font-bold text-slate-400">
-      <p>Mostrando 3 de 42 eventos de prestigio</p>
-      <div class="flex items-center gap-6">
-        <span class="cursor-pointer hover:text-sge-primary">Anterior</span>
-        <div class="flex gap-2">
-          <span class="w-8 h-8 flex items-center justify-center bg-blue-100 text-sge-primary rounded-lg">1</span>
-          <span class="w-8 h-8 flex items-center justify-center hover:bg-slate-100 rounded-lg cursor-pointer">2</span>
-        </div>
-        <span class="cursor-pointer hover:text-sge-primary">Siguiente</span>
+    <footer class="p-8 border-t flex justify-between items-center bg-white/50">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Página {{currentPage()}}</span>
+      <div class="flex items-center gap-4">
+        <button class="pagination-btn">Anterior</button>
+        <span class="w-8 h-8 flex items-center justify-center bg-blue-100 text-[#005CAD] rounded-lg font-black text-xs shadow-sm">1</span>
+        <button class="pagination-btn">Siguiente</button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- 3. BOTÓN CREAR NUEVO (Centrado según petición) -->
+  <div class="flex justify-center mb-16">
+    <button (click)="toggleForm()" class="bg-[#001C3B] text-white px-20 py-7 rounded-[2.5rem] shadow-2xl flex items-center gap-4 hover:scale-105 transition-all group">
+      <mat-icon class="scale-150 transition-transform group-hover:rotate-90">{{ isFormVisible() ? 'close' : 'add' }}</mat-icon>
+      <span class="text-xl font-black uppercase tracking-tighter">{{ isFormVisible() ? 'Cerrar Panel' : 'Registrar Nuevo Hito' }}</span>
+    </button>
+  </div>
+
+  <!-- 4. FORMULARIO CRUD -->
+  @if (isFormVisible()) {
+    <div class="bg-white p-12 rounded-[4rem] shadow-2xl border-b-[20px] border-[#005CAD] mb-16 animate-in">
+      <h2 class="text-2xl font-black text-[#005CAD] mb-8 uppercase italic tracking-tighter">
+        <mat-icon class="mr-2">auto_awesome</mat-icon> {{ isEditing() ? 'Actualizar Información' : 'Nuevo Registro de Excelencia' }}
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-end">
+        <input [(ngModel)]="currentEvento.nombre" placeholder="Nombre del Evento" class="filter-input !bg-slate-50 font-bold">
+        <input [(ngModel)]="currentEvento.fechaEvento" type="datetime-local" class="filter-input !bg-slate-50">
+        <input [(ngModel)]="currentEvento.aforoMaximo" type="number" placeholder="Capacidad" class="filter-input !bg-slate-50">
+        <select [(ngModel)]="currentEvento.tipoEvento" class="filter-input !bg-slate-50 font-black text-sge-navy">
+          <option value="CAPACITACION">CAPACITACIÓN</option>
+          <option value="TORNEO">TORNEO</option>
+          <option value="TALLER">TALLER</option>
+        </select>
+        <button (click)="onSave()" [disabled]="isUploading()" class="bg-[#005CAD] text-white h-[58px] rounded-2xl font-black shadow-xl hover:bg-[#001C3B] transition-all">
+          {{ isUploading() ? '...' : 'CONFIRMAR' }}
+        </button>
       </div>
     </div>
-  </div>
+  }
 
-  <!-- CARDS INFERIORES -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-    <div class="bg-white p-10 rounded-[3rem] shadow-sm border border-slate-50 relative overflow-hidden">
-      <h3 class="text-2xl font-black text-slate-800 mb-4">Garantía de Excelencia</h3>
-      <p class="text-slate-500 text-sm leading-relaxed mb-6">
-        Todos los eventos en SGE cumplen con los más altos estándares de auditoría de mérito institucional. Su gestión refleja el prestigio de nuestra red.
-      </p>
-      <a href="#" class="text-sge-primary font-black text-sm no-underline flex items-center gap-2 hover:gap-4 transition-all">
-        Ver normas de calidad <mat-icon class="scale-75">arrow_forward</mat-icon>
-      </a>
-      <!-- Decoración fondo -->
-      <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-slate-50 rounded-full opacity-50"></div>
-    </div>
-
-    <div class="bg-sge-navy p-10 rounded-[3rem] shadow-2xl relative overflow-hidden text-white">
-      <h3 class="text-2xl font-black mb-4">Impacto Profesional</h3>
-      <p class="text-white/70 text-sm leading-relaxed mb-8">
-        Hemos certificado a más de 12,000 profesionales a través de estos encuentros. El crecimiento no es una opción, es nuestro legado.
-      </p>
-      <button class="bg-white text-sge-navy px-8 py-3 rounded-2xl font-black text-sm hover:scale-105 transition-all shadow-xl">
-        Expandir impacto
+  <!-- 5. CARDS DE IMPACTO (Una al lado de la otra) -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+    <div class="bg-white p-14 rounded-[3.5rem] shadow-sm border border-slate-50 relative overflow-hidden group">
+      <h3 class="text-3xl font-black text-slate-800 mb-6 tracking-tight">Garantía de Excelencia</h3>
+      <p class="text-slate-500 text-base leading-relaxed mb-10 font-medium">Todos los eventos en SGE cumplen con los más altos estándares de auditoría institucional. Su gestión refleja prestigio.</p>
+      <button class="text-[#0583F2] font-black text-sm flex items-center gap-2 uppercase tracking-widest hover:gap-4 transition-all">
+        Ver normas <mat-icon class="scale-75">arrow_forward</mat-icon>
       </button>
-      <!-- Icono de fondo tipo marca de agua -->
-      <mat-icon class="absolute top-10 right-10 scale-[5] opacity-10 rotate-12">auto_awesome</mat-icon>
+      <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-50 rounded-full opacity-30"></div>
+    </div>
+
+    <div class="bg-[#005CAD] p-14 rounded-[3.5rem] shadow-2xl relative overflow-hidden text-white">
+      <h3 class="text-3xl font-black mb-6 tracking-tight">Impacto Profesional</h3>
+      <p class="text-white/70 text-base leading-relaxed mb-10 font-light italic">Hemos certificado a miles de profesionales. El crecimiento no es una opción, es nuestro legado institucional.</p>
+      <button class="bg-white text-[#005CAD] px-10 py-4 rounded-2xl font-black text-sm uppercase hover:scale-105 transition-all">Expandir impacto</button>
+      <mat-icon class="absolute top-0 right-0 scale-[8] opacity-10 rotate-12 text-white">stars</mat-icon>
     </div>
   </div>
+
 </div>

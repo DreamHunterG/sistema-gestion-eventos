@@ -7,17 +7,23 @@ import { Evento } from '../models/evento.model';
   providedIn: 'root'
 })
 export class EventoService {
+  // Dirección de la ventanilla de eventos en Java
   private apiUrl = 'http://localhost:8080/api/eventos';
   private http = inject(HttpClient);
 
-  // 🔑 ESTE ES EL MÉTODO QUE FALTABA:
-  // Se encarga de ir al Backend y traer la lista de Torneos y Talleres
+  // HU-08: Traer todos los eventos activos
   getEventos(): Observable<Evento[]> {
     return this.http.get<Evento[]>(this.apiUrl);
   }
 
-  // Método opcional para crear eventos desde el Front
-  crearEvento(evento: Evento): Observable<Evento> {
+  // HU-05 y HU-06: Crear o Actualizar evento
+  // Si tiene ID, actualiza; si no, crea uno nuevo
+  guardar(evento: Evento): Observable<Evento> {
     return this.http.post<Evento>(this.apiUrl, evento);
+  }
+
+  // HU-07: Archivado lógico (Cambiar estado en el Back)
+  archivarEvento(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

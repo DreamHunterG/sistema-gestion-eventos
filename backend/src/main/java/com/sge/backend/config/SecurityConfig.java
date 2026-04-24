@@ -8,14 +8,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder; // IMPORTANTE
+import org.springframework.security.crypto.password.PasswordEncoder; // IMPORTANTE
 import java.util.Arrays;
 
 @Configuration
@@ -29,29 +27,25 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                // 🌐 Habilitamos CORS para que Angular pueda hacer peticiones desde otro puerto
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 🔓 RUTAS PÚBLICAS: Acceso libre para login y registro
+                        // 🔓 RUTAS ABIERTAS
                         .requestMatchers("/api/auth/**", "/api/usuarios/registro", "/api/public/**").permitAll()
-                        // 🔒 RUTAS PRIVADAS: Todo lo demás requiere Token JWT
+                        // 🔒 RUTAS CERRADAS
                         .anyRequest().authenticated()
                 )
-                // 🛡️ MODO STATELESS: No guardamos sesiones en el servidor (Vital para JWT)
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 🛡️ FILTRO JWT: Ejecutar nuestro escáner antes que el filtro de usuario/clave de Spring
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    // 🛡️ REINTEGRADO: Esta es la pieza que le faltaba al sistema para arrancar
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // RNF-01: Encriptación robusta de contraseñas
         return new BCryptPasswordEncoder();
     }
 
-    // Configuración necesaria para que Angular (puerto 4200) hable con Java (puerto 8080)
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();

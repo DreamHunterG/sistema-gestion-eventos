@@ -1,0 +1,152 @@
+<div class="min-h-screen bg-[#F2F2F2] p-10 font-sans animate-in">
+
+  <!-- Header del Sistema (Estilo Figma) -->
+  <header class="max-w-7xl mx-auto mb-12">
+    <h1 class="text-[42px] font-black text-slate-800 tracking-tight mb-2">Importar Comunidad de Logro</h1>
+    <p class="text-gray-500 font-medium text-lg">Sube tu archivo para preparar la certificación</p>
+  </header>
+
+  <main class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+
+    <!-- COLUMNA IZQUIERDA (Operativa - 8 columnas) -->
+    <div class="lg:col-span-8 space-y-10">
+
+      <!-- Card: Descargar Plantilla -->
+      <div class="bg-white p-8 rounded-[2.5rem] shadow-sm flex items-center justify-between border border-gray-100">
+        <div class="flex items-center gap-6">
+          <div class="bg-[#EBF5FF] w-16 h-16 rounded-2xl flex items-center justify-center text-sge-primary">
+            <mat-icon class="scale-[1.5]">description</mat-icon>
+          </div>
+          <div>
+            <h3 class="font-extrabold text-slate-800 m-0 text-xl">Descargar Plantilla CSV</h3>
+            <p class="text-sm text-gray-400 font-medium max-w-xs">Usa nuestro formato estándar para asegurar una carga exitosa</p>
+          </div>
+        </div>
+        <button mat-flat-button class="bg-[#005CAD] text-white rounded-2xl px-8 py-7 flex items-center gap-2 hover:brightness-110 transition-all font-bold">
+          <mat-icon>download</mat-icon> Descargar Plantilla CSV
+        </button>
+      </div>
+
+      <!-- Zona de Arrastre (Drop Zone) -->
+      <div class="bg-white p-16 rounded-[3.5rem] border-2 border-dashed border-slate-200 flex flex-col items-center justify-center text-center relative overflow-hidden transition-all hover:border-sge-primary group">
+        <div class="bg-[#F8FAFC] w-28 h-28 rounded-full flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
+          <mat-icon class="text-sge-primary scale-[3]">cloud_upload</mat-icon>
+        </div>
+
+        <h2 class="text-3xl font-black text-slate-800 max-w-md mb-4">Arrastra tu archivo .csv aquí o haz clic para buscar</h2>
+        <p class="text-slate-400 font-medium mb-10">Formatos permitidos: .csv, Peso máximo 10MB.</p>
+
+        <input type="file" #fileInput class="hidden" (change)="onFileSelected($event)" accept=".csv">
+
+        @if (!selectedFile()) {
+          <button (click)="fileInput.click()" class="bg-[#F1F5F9] text-slate-600 px-12 py-4 rounded-[1.5rem] font-bold hover:bg-slate-200 transition-all text-lg shadow-sm">
+            Buscar en mi equipo
+          </button>
+        }
+
+        <!-- Barra de carga Amarilla -->
+        @if (isUploading()) {
+          <div class="mt-10 w-full max-w-xl">
+            <div class="flex justify-between items-end mb-3">
+              <span class="text-sge-primary font-bold text-sm italic animate-pulse">Procesando archivo...</span>
+              <span class="text-sge-primary font-black text-base">{{uploadProgress()}}%</span>
+            </div>
+            <mat-progress-bar mode="determinate" [value]="uploadProgress()" class="h-3 rounded-full achievement-progress"></mat-progress-bar>
+          </div>
+        }
+
+        @if (selectedFile() && !isUploading()) {
+          <div class="mt-6 flex items-center gap-4 text-sge-navy bg-blue-50 px-8 py-4 rounded-2xl border border-blue-100 animate-in">
+            <mat-icon class="text-green-600">check_circle</mat-icon>
+            <span class="font-bold text-lg">{{selectedFile()?.name}}</span>
+            <button (click)="selectedFile.set(null)" class="ml-4 text-red-400 hover:text-red-600 font-black">✕</button>
+          </div>
+        }
+      </div>
+
+      <!-- Footer de Operación -->
+      <div class="flex flex-col gap-10">
+        <!-- Selector de Evento -->
+        <div class="bg-white p-8 rounded-[2.5rem] shadow-sm flex items-center justify-between border-l-[12px] border-sge-achievement">
+          <div class="flex flex-col">
+            <span class="font-black text-slate-800 text-xl">1. Selecciona el Evento Destino:</span>
+            <span class="text-xs text-gray-400 uppercase font-bold tracking-widest mt-1">Vincular registros a base de datos</span>
+          </div>
+          <mat-form-field appearance="outline" class="w-96">
+            <mat-select (selectionChange)="eventoSeleccionado.set($event.value)" placeholder="Elegir Torneo o Taller">
+              @for (ev of eventos(); track ev.id) {
+                <mat-option [value]="ev.id">{{ev.nombre}}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- BOTÓN MAESTRO: Centrado y Color #001C3B -->
+        <div class="flex justify-center w-full">
+          <button (click)="procesarArchivo()" [disabled]="!selectedFile() || !eventoSeleccionado() || isUploading()"
+                  class="bg-[#001C3B] text-white px-24 py-7 rounded-[2rem] font-black text-2xl flex items-center gap-4 hover:scale-105 hover:shadow-2xl transition-all disabled:opacity-20 shadow-xl">
+            <mat-icon class="scale-125">rocket_launch</mat-icon> Procesar e Inscribir
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA -->
+    <div class="lg:col-span-4 space-y-8">
+
+      <!-- Instrucciones Rápidas -->
+      <div class="bg-[#E6F2FF] p-10 rounded-[3rem] border border-blue-100 shadow-sm">
+        <h4 class="text-sge-navy font-black flex items-center gap-3 mb-6 text-base uppercase tracking-wider">
+          <mat-icon>tips_and_updates</mat-icon> Instrucciones Rápidas
+        </h4>
+        <ul class="text-[13px] text-slate-600 space-y-6 font-bold list-decimal pl-6">
+          <li>Descarga la plantilla oficial para evitar errores de formato.</li>
+          <li>Asegúrate que los correos electrónicos sean institucionales.</li>
+          <li>Revisa el resumen de operación antes de confirmar la inscripción.</li>
+        </ul>
+      </div>
+
+      <!-- Resumen de Resultados -->
+      @if (importResult()) {
+        <div class="bg-white p-8 rounded-[3rem] shadow-2xl border border-gray-50 animate-in slide-in-from-right">
+          <div class="flex items-center gap-3 mb-8">
+            <mat-icon class="text-sge-navy scale-110">assessment</mat-icon>
+            <h4 class="font-black text-slate-800 m-0 text-lg">Resumen de la Operación</h4>
+          </div>
+
+          <div class="bg-green-50 p-5 rounded-[1.5rem] flex items-center justify-between mb-8 border border-green-100">
+            <div class="flex items-center gap-3 text-green-700 font-black text-sm">
+              <mat-icon>verified</mat-icon>
+              <span>{{importResult()?.exitosos}} Filas procesadas</span>
+            </div>
+            <span class="bg-green-600 text-white px-3 py-1 rounded-lg text-[10px] font-black">ÉXITO</span>
+          </div>
+
+          @if (importResult()?.fallidos! > 0) {
+            <p class="text-[11px] font-black text-gray-400 uppercase mb-4 tracking-widest text-center">Errores Encontrados ({{importResult()?.fallidos}})</p>
+            <div class="max-h-72 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+              @for (err of importResult()?.errores; track err) {
+                <div class="bg-red-50/60 p-4 rounded-2xl border border-red-100 flex items-start gap-4">
+                  <mat-icon class="text-red-500 scale-90">error_outline</mat-icon>
+                  <p class="text-[11px] text-red-800 font-bold m-0 leading-tight">{{err}}</p>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Tip de Prestigio (Gamificación unificada en color #666000) -->
+      <div class="bg-[#FBF8D1] p-10 rounded-[3rem] border-l-[12px] border-sge-achievement shadow-sm flex items-start gap-5">
+        <mat-icon class="flex-shrink-0 scale-[1.5]" style="color: #666000;">stars</mat-icon>
+        <div style="color: #666000;">
+          <h5 class="text-[12px] font-black uppercase m-0 tracking-wider">Tip de Prestigio</h5>
+          <p class="text-[12px] font-semibold leading-relaxed mt-3">
+            Inscribir a más de 50 participantes simultáneamente te otorga la insignia de <strong style="color: #666000;" class="underline">"Gran Coordinador"</strong>. ¡Sigue creciendo tu comunidad!
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>

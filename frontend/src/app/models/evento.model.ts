@@ -3,6 +3,8 @@ export interface Evento {
   nombre: string;
   fechaEvento: string;
   aforoMaximo: number;
+  totalAsistentes?: number; // Viene calculado del Back
   tipoEvento: 'CAPACITACION' | 'TALLER' | 'TORNEO';
-  estado?: string;
+  modalidad: 'PRESENCIAL' | 'VIRTUAL';
+  estado: 'ACTIVO' | 'INACTIVO';
 }

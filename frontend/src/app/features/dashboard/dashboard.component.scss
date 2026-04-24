@@ -1,0 +1,90 @@
+.filter-label {
+  font-size: 9px;
+  font-weight: 900;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.filter-input {
+  background-color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 1.2rem;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+  outline: none;
+  width: 100%;
+  transition: all 0.3s ease;
+
+  &:focus {
+    box-shadow: 0 0 0 4px rgba(5, 131, 242, 0.08);
+    border-color: #0583F2;
+  }
+}
+
+.active-filter-badge {
+  background-color: #f8fafc;
+  color: #0583F2;
+  padding: 0.4rem 0.9rem;
+  border-radius: 99px;
+  font-size: 9px;
+  font-weight: 900;
+  border: 1px solid #e2e8f0;
+  letter-spacing: 0.05em;
+}
+
+.page-box {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 12px;
+  font-weight: 900;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &.active-page {
+    background: #005CAD;
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(0, 92, 173, 0.3);
+  }
+}
+
+.animate-in {
+  animation: slideUp 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.filter-label {
+  @apply text-[9px] font-black text-sge-primary uppercase tracking-widest ml-1;
+}
+
+.filter-input {
+  @apply bg-slate-50 p-4 rounded-xl border-none outline-none text-xs w-full font-medium transition-all;
+  &:focus {
+    @apply ring-2 ring-blue-100 bg-white;
+  }
+}
+
+.active-filter-badge {
+  @apply bg-blue-100 text-[#0583F2] px-3 py-1 rounded-full text-[8px] font-black uppercase border border-blue-200;
+}
+
+.page-box {
+  @apply w-10 h-10 flex items-center justify-center bg-slate-50 rounded-xl text-slate-400 hover:bg-slate-100 transition-all;
+}
+
+.active-page {
+  @apply bg-sge-primary text-white shadow-lg shadow-blue-100;
+}

@@ -1,4 +1,4 @@
-// 1. IMPORTACIONES (Deben ir primero por norma de Sass)
+// 1. IMPORTACIONES (Siempre en la primera línea)
 @use '@angular/material' as mat;
 
 // 2. DIRECTIVAS DE TAILWIND
@@ -30,4 +30,130 @@ body {
   height: 100%;
 }
 
-/* Puedes añadir tus estilos personalizados aquí abajo */
+// 4. VARIABLES Y ESTILOS GLOBALES PERSONALIZADOS
+:root {
+  --sge-border-radius: 24px;
+}
+
+// Ajuste global de tarjetas según tu Figma
+.mat-mdc-card {
+  border-radius: var(--sge-border-radius) !important;
+  overflow: hidden;
+}
+
+// 5. PERSONALIZACIÓN DE SNACKBAR (TOASTS)
+.success-snackbar {
+  --mdc-snackbar-container-color: #15803D !important;
+  --mdc-snackbar-label-text-color: white !important;
+  border-radius: 12px;
+}
+
+.error-snackbar {
+  --mdc-snackbar-container-color: #BA1A1A !important;
+  --mdc-snackbar-label-text-color: white !important;
+  border-radius: 12px;
+}
+
+// Estilo para la barra de progreso Amarilla de Logro
+.achievement-progress {
+  --mdc-linear-progress-active-indicator-color: #F3E742 !important;
+  --mdc-linear-progress-track-color: #E2E8F0 !important;
+  height: 12px !important;
+  border-radius: 10px;
+}
+
+// Scrollbar elegante para la lista de errores
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #E2E8F0;
+  border-radius: 10px;
+}
+
+// Para que el select de Angular Material sea redondeado como tu Figma
+.mat-mdc-form-field-focus-overlay {
+  border-radius: 16px !important;
+}
+
+// 7. EFECTOS VISUALES ADICIONALES
+.dashed-area {
+  transition: all 0.3s ease;
+  &:hover {
+    background-color: rgba(5, 92, 173, 0.05); // Uso de sge-navy con opacidad
+    border-color: #0583F2 !important;
+  }
+}
+
+// Animación de entrada para los resúmenes (Figma Feel)
+.animate-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.filter-input {
+  background-color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 1.2rem;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  font-size: 0.85rem;
+  outline: none;
+  width: 100%;
+  transition: all 0.3s ease;
+
+  &:focus {
+    box-shadow: 0 0 0 4px rgba(5, 131, 242, 0.1);
+    border-color: #0583F2;
+  }
+}
+
+.page-box {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  border-radius: 10px;
+  font-weight: 900;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &.active-page {
+    background: #0583F2;
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(5, 131, 242, 0.3);
+  }
+}
+
+.animate-in {
+  animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.active-filter-badge {
+  @apply bg-blue-100 text-[#0583F2] px-3 py-1.5 rounded-full text-[9px] font-black uppercase border border-blue-200;
+}
+
+.page-box {
+  @apply w-10 h-10 flex items-center justify-center font-black rounded-xl transition-all;
+}
+
+.animate-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
