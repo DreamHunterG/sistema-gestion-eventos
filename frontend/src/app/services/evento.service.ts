@@ -7,22 +7,25 @@ import { Evento } from '../models/evento.model';
   providedIn: 'root'
 })
 export class EventoService {
-  // Dirección de la ventanilla de eventos en Java
   private apiUrl = 'http://localhost:8080/api/eventos';
   private http = inject(HttpClient);
 
-  // HU-08: Traer todos los eventos activos
+  // HU-08: Traer eventos activos
   getEventos(): Observable<Evento[]> {
     return this.http.get<Evento[]>(this.apiUrl);
   }
 
-  // HU-05 y HU-06: Crear o Actualizar evento
-  // Si tiene ID, actualiza; si no, crea uno nuevo
+  // HU-07: NUEVO - Traer eventos archivados
+  getInactivos(): Observable<Evento[]> {
+    return this.http.get<Evento[]>(`${this.apiUrl}/inactivos`);
+  }
+
+  // HU-05 y HU-06: Crear o Actualizar
   guardar(evento: Evento): Observable<Evento> {
     return this.http.post<Evento>(this.apiUrl, evento);
   }
 
-  // HU-07: Archivado lógico (Cambiar estado en el Back)
+  // HU-07: Archivado lógico
   archivarEvento(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
