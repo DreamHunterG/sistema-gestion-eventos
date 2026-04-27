@@ -161,6 +161,15 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-slate-50 border-b border-slate-50/50"></tr>
     </table>
+
+    <footer class="p-8 border-t flex justify-between items-center bg-white/50">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-widest italic">Página {{currentPage()}}</span>
+      <div class="flex items-center gap-4">
+        <button class="pagination-btn">Anterior</button>
+        <span class="w-8 h-8 flex items-center justify-center bg-blue-100 text-[#005CAD] rounded-lg font-black text-xs shadow-sm">1</span>
+        <button class="pagination-btn">Siguiente</button>
+      </div>
+    </footer>
   </div>
 
   <!-- 3. ACCIÓN DE CREACIÓN (Botón Centrado #001C3B) -->
