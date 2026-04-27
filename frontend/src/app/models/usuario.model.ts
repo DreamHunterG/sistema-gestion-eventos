@@ -1,8 +1,14 @@
 export interface Usuario {
   id?: number;
-  nombre: string;    // 🔑 Campo sincronizado con el SQL de hace un momento
+  nombre: string;
   email: string;
-  password?: string; // Opcional (solo para creación/edición)
   rol: 'ADMIN' | 'MONITOR' | 'PARTICIPANTE';
-  estado: 'ACTIVO' | 'INACTIVO'; // 🔑 Campo para el archivado lógico
+  estado: 'ACTIVO' | 'INACTIVO';
+  // 🔑 El password ya no vive aquí para evitar fugas de datos
 }
+
+// Creamos una interfaz aparte solo para el momento de crear/editar
+export interface UsuarioRequest extends Usuario {
+  password?: string;
+}
+

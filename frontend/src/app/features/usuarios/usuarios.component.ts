@@ -18,57 +18,45 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 })
 export class UsuariosComponent implements OnInit {
   private usuarioService = inject(UsuarioService);
-  protected authService = inject(AuthService); // Inyectamos para saber quién está logueado
+  protected authService = inject(AuthService);
   private snackBar = inject(MatSnackBar);
 
-  // --- ESTADOS DE DATOS ---
   usuarios = signal<Usuario[]>([]);
-  viewMode = signal<'ACTIVO' | 'INACTIVO'>('ACTIVO'); // Controla la pestaña superior
+  viewMode = signal<'ACTIVO' | 'INACTIVO'>('ACTIVO');
   showFilters = signal(false);
   isFormVisible = signal(false);
   isEditing = signal(false);
 
-  // --- FILTROS ---
   searchTerm = signal('');
   filterRol = signal('');
 
-  // Objeto para el formulario (Ahora incluye 'nombre' por defecto)
   currentUsuario: Usuario = this.initUsuario();
 
-  // --- MOTOR DE FILTRADO DINÁMICO (Nombre y Email) ---
   filteredUsuarios = computed(() => {
     return this.usuarios().filter(u => {
-      // 1. Filtrar por estado (Vigente o Inactivo según el botón de arriba)
       if (u.estado !== this.viewMode()) return false;
-
-      // 2. Filtrar por texto (Busca en Email O en Nombre al tiempo)
       const term = this.searchTerm().toLowerCase();
       const matchText = u.email.toLowerCase().includes(term) ||
         (u.nombre && u.nombre.toLowerCase().includes(term));
-
-      // 3. Filtrar por Rol si hay alguno seleccionado
       const matchRol = this.filterRol() ? u.rol === this.filterRol() : true;
-
       return matchText && matchRol;
     });
   });
 
-  displayedColumns: string[] = ['perfil', 'nombre', 'email', 'rol', 'actions'];
+  // 🔑 COLUMNA 'ESTADO' AÑADIDA AQUÍ
+  displayedColumns: string[] = ['perfil', 'nombre', 'email', 'rol', 'estado', 'actions'];
 
   ngOnInit() { this.cargarEquipo(); }
 
   cargarEquipo() {
     this.usuarioService.getUsuarios().subscribe({
       next: (data) => this.usuarios.set(data),
-      error: () => this.notificar('Falla al leer base de datos. Verifica el servidor.', 'error')
+      error: () => this.notificar('Falla al leer base de datos', 'error')
     });
   }
 
-  // CUMPLIMIENTO ISO: Prevención de auto-eliminación
   onArchivar(u: Usuario) {
     if (!u.id) return;
-
-    // 🛡️ REGLA DE SEGURIDAD SENIOR: Bloquear si es el mismo usuario de la sesión
     if (u.email === this.authService.currentUser()?.email) {
       this.notificar('Acción bloqueada: No puedes revocar tu propio acceso.', 'error');
       return;
@@ -77,7 +65,7 @@ export class UsuariosComponent implements OnInit {
     const accion = u.estado === 'ACTIVO' ? 'archivar' : 'restaurar';
     if (confirm(`¿Desea ${accion} el acceso de ${u.nombre}?`)) {
       this.usuarioService.eliminarUsuario(u.id).subscribe(() => {
-        this.notificar('Estado de acceso actualizado en el sistema', 'success');
+        this.notificar('Estado de acceso actualizado', 'success');
         this.cargarEquipo();
       });
     }
@@ -90,19 +78,18 @@ export class UsuariosComponent implements OnInit {
 
     request.subscribe({
       next: () => {
-        this.notificar('Identidad confirmada y guardada', 'success');
+        this.notificar('Identidad confirmada con éxito', 'success');
         this.cargarEquipo();
         this.isFormVisible.set(false);
-      },
-      error: () => this.notificar('Error en el proceso de guardado', 'error')
+      }
     });
   }
 
   onEdit(u: Usuario) {
     this.isEditing.set(true);
-    this.currentUsuario = { ...u, password: '' }; // Password vacío para no sobreescribir si no se cambia
+    this.currentUsuario = { ...u, password: '' };
     this.isFormVisible.set(true);
-    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
   }
 
   toggleForm() {

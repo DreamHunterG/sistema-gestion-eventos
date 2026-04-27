@@ -1,39 +1,40 @@
 <div class="max-w-7xl mx-auto font-sans pb-20 animate-in p-6 bg-[#F2F2F2] min-h-screen">
 
-  <!-- Header con Interruptor de Vistas (Vigentes / Inactivos) -->
   <header class="max-w-7xl mx-auto mb-12 flex justify-between items-end">
     <div>
       <h1 class="text-[42px] font-black text-slate-800 tracking-tight mb-2 uppercase italic">Equipo de Validación</h1>
-      <p class="text-gray-500 font-medium text-lg italic">Administra los roles y permisos de tu red de confianza para garantizar la
-        integridad de cada proceso.</p>
+      <p class="text-gray-500 font-medium text-lg italic tracking-tight">Administra los roles y permisos de tu red de confianza para garantizar la integridad de cada proceso.</p>
     </div>
 
     <div class="flex bg-white p-1.5 rounded-2xl shadow-inner border border-gray-200">
       <button (click)="viewMode.set('ACTIVO')"
-              [class]="viewMode() === 'ACTIVO' ? 'bg-[#F3E742] text-[#666000] shadow-md' : 'text-slate-400'"
-              class="px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all">Vigentes</button>
+              [class]="viewMode() === 'ACTIVO' ? 'bg-[#005CAD] text-white shadow-md' : 'text-slate-400'"
+              class="px-8 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all">Vigentes</button>
       <button (click)="viewMode.set('INACTIVO')"
               [class]="viewMode() === 'INACTIVO' ? 'bg-slate-700 text-white shadow-md' : 'text-slate-400'"
               class="px-8 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all">Inactivos</button>
     </div>
   </header>
 
-  <!-- 1. ZONA DE BÚSQUEDA Y KPI -->
+  <!-- 1. ZONA DE BÚSQUEDA Y KPI DINÁMICO -->
   <div class="grid grid-cols-12 gap-8 mb-16 items-center">
     <div class="col-span-9 bg-white p-6 rounded-[2rem] shadow-sm flex items-center gap-6 border border-gray-100">
       <mat-icon class="text-slate-300 scale-125 ml-4">search</mat-icon>
       <input type="text" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
              placeholder="Buscar por nombre o correo electrónico institucional..."
              class="w-full outline-none bg-transparent font-bold text-slate-700 text-lg">
-
     </div>
 
-    <div class="col-span-3 bg-[#F3e742] text-[#666000] p-7 rounded-[2.5rem] shadow-2xl flex items-center justify-between relative overflow-hidden">
+    <!-- 🎨 KPI DINÁMICO: Cambia de color según viewMode() -->
+    <div class="col-span-3 p-7 rounded-[2.5rem] shadow-2xl flex items-center justify-between relative overflow-hidden transition-colors duration-500"
+         [class]="viewMode() === 'ACTIVO' ? 'bg-[#F3E742] text-[#666000]' : 'bg-[#004D8C] text-white'">
       <div class="flex items-center gap-4 z-10">
-        <div class="flex items-center justify-center w-12 h-12 rounded-xl bg-white/10"><mat-icon>groups</mat-icon></div>
+        <div class="flex items-center justify-center w-12 h-12 rounded-xl" [class]="viewMode() === 'ACTIVO' ? 'bg-black/5' : 'bg-white/10'">
+          <mat-icon class="text-3xl">groups</mat-icon>
+        </div>
         <div class="leading-tight">
           <p class="text-4xl font-black">{{ filteredUsuarios().length }}</p>
-          <p class="text-[10px] uppercase font-semibold opacity-70">Resultado</p>
+          <p class="text-[10px] uppercase font-semibold opacity-70">Miembros</p>
         </div>
       </div>
       <mat-icon class="absolute -bottom-3 -right-3 text-white/10 text-[90px]">groups</mat-icon>
@@ -43,74 +44,88 @@
   <!-- 2. TABLA PRINCIPAL -->
   <div class="bg-white rounded-[3.5rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-50 mb-12">
 
-    <!-- CABECERA DE TABLA REESTRUCTURADA SEGÚN PETICIÓN -->
     <div class="p-10 border-b bg-slate-50/20 flex justify-between items-center">
-      <div class="flex items-center gap-4">
-        <div [class]="viewMode() === 'ACTIVO' ? 'bg-[#005CAD]' : 'bg-slate-600'" class="p-3 rounded-2xl shadow-inner text-white transition-colors">
-          <mat-icon>{{ viewMode() === 'ACTIVO' ? 'admin_panel_settings' : 'block' }}</mat-icon>
+      <div class="flex items-center gap-8">
+        <div class="flex items-center gap-4">
+          <div [class]="viewMode() === 'ACTIVO' ? 'bg-[#005CAD]' : 'bg-slate-600'" class="p-3 rounded-2xl shadow-inner text-white transition-colors">
+            <mat-icon>{{ viewMode() === 'ACTIVO' ? 'admin_panel_settings' : 'block' }}</mat-icon>
+          </div>
+          <h2 class="text-xl font-bold text-slate-700 m-0 tracking-tight italic uppercase">
+            {{ viewMode() === 'ACTIVO' ? 'Listado de Usuarios' : 'Accesos Inactivos' }}
+          </h2>
         </div>
-        <h2 class="text-xl font-bold text-slate-700 m-0 tracking-tight italic uppercase">
-          {{ viewMode() === 'ACTIVO' ? 'Listado de Personal' : 'Accesos Revocados' }}
-        </h2>
+
+        <button (click)="showFilters.set(!showFilters())"
+                class="bg-slate-100 text-slate-500 px-6 py-3 rounded-2xl font-black text-xs hover:bg-slate-200 transition-all border border-slate-200/50">
+          <mat-icon class="scale-75">tune</mat-icon> {{ showFilters() ? 'CERRAR' : 'FILTRAR' }}
+        </button>
       </div>
-      <button (click)="showFilters.set(!showFilters())" class="bg-slate-100 text-slate-500 px-8 py-3 rounded-2xl font-black text-xs flex items-center gap-3 border">
-        <mat-icon class="scale-75">tune</mat-icon> {{ showFilters() ? 'CERRAR' : 'FILTRAR' }}
-      </button>
-      <span class="bg-[#F3E742] text-[#666000] px-8 py-2 rounded-xl text-[10px] font-black italic shadow-sm border border-yellow-200/50">ACTUALIZADO EN TIEMPO REAL</span>
+      <span class="bg-[#F3E742] text-[#666000] px-8 py-2 rounded-xl text-[10px] font-black italic shadow-sm">ACTUALIZADO EN TIEMPO REAL</span>
     </div>
 
     @if (showFilters()) {
       <div class="bg-slate-50/50 p-8 border-b animate-in flex gap-6">
         <select [ngModel]="filterRol()" (ngModelChange)="filterRol.set($event)" class="filter-input w-64 font-bold border-none shadow-sm p-4 rounded-xl">
           <option value="">TODOS LOS ROLES</option>
-          <option value="ADMIN">🛡️ADMINISTRADOR</option>
-          <option value="MONITOR">🔍MONITOR</option>
+          <option value="ADMIN">ADMINISTRADOR</option>
+          <option value="MONITOR">MONITOR</option>
         </select>
       </div>
     }
 
     <table mat-table [dataSource]="filteredUsuarios()" class="w-full">
       <ng-container matColumnDef="perfil">
-        <th mat-header-cell *matHeaderCellDef class="p-8 w-20"></th>
-        <td mat-cell *matCellDef="let u" class="p-6">
-          <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-300 border-2 border-white shadow-sm">
-            <mat-icon>person</mat-icon>
+        <th mat-header-cell *matHeaderCellDef class="p-8 w-24"></th>
+        <td mat-cell *matCellDef="let u" class="p-8 text-center">
+          <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto text-slate-300 border-2 border-white shadow-sm">
+            <mat-icon class="scale-125">person</mat-icon>
           </div>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nombre Completo</th>
-        <td mat-cell *matCellDef="let u" class="font-black text-slate-800 text-base" [class.opacity-40]="u.estado === 'INACTIVO'">{{u.nombre}}</td>
+        <td mat-cell *matCellDef="let u" class="font-black text-slate-800 text-lg" [class.opacity-40]="u.estado === 'INACTIVO'">{{u.nombre}}</td>
       </ng-container>
 
       <ng-container matColumnDef="email">
-        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Identidad Digital</th>
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email</th>
         <td mat-cell *matCellDef="let u" class="text-slate-500 italic">{{u.email}}</td>
       </ng-container>
 
       <ng-container matColumnDef="rol">
-        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase text-center">Permisos</th>
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase text-center">Rol</th>
         <td mat-cell *matCellDef="let u" class="text-center">
-          <span [class]="u.rol === 'ADMIN' ? 'bg-[#001C3B]' : 'bg-[#0583F2]'" class="px-5 py-2 rounded-xl text-[9px] font-black text-white shadow-sm">{{u.rol}}</span>
+          <span [class]="u.rol === 'ADMIN' ? 'bg-[#001C3B]' : 'bg-[#0583F2]'" class="px-6 py-2 rounded-2xl text-[10px] font-black text-white shadow-sm uppercase">{{u.rol}}</span>
         </td>
       </ng-container>
 
-
+      <!-- 🔑 COLUMNA DE ESTADO DINÁMICA -->
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase text-center">Estatus</th>
+        <td mat-cell *matCellDef="let u" class="text-center">
+          <div class="flex items-center justify-center gap-2 text-[10px] font-black uppercase"
+               [class]="u.estado === 'ACTIVO' ? 'text-green-600' : 'text-red-500'">
+            <span class="w-2 h-2 rounded-full"
+                  [class]="u.estado === 'ACTIVO' ? 'bg-green-500 animate-pulse' : 'bg-red-500'"></span>
+            {{ u.estado }}
+          </div>
+        </td>
+      </ng-container>
 
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef class="pr-10 text-right">Acciones</th>
-        <td mat-cell *matCellDef="let u" class="pr-10 text-right">
-          <button (click)="onEdit(u)" mat-icon-button class="text-blue-500 mr-2 hover:scale-125 transition-all"><mat-icon>edit</mat-icon></button>
+        <th mat-header-cell *matHeaderCellDef class="pr-12 text-right">Acciones</th>
+        <td mat-cell *matCellDef="let u" class="pr-12 text-right">
+          <button (click)="onEdit(u)" mat-icon-button class="text-blue-500 mr-4 hover:scale-125 transition-all"><mat-icon>edit</mat-icon></button>
           <button (click)="onArchivar(u)" mat-icon-button
                   [class]="u.estado === 'ACTIVO' ? 'text-red-400' : 'text-green-400'" class="hover:scale-125 transition-all">
-            <mat-icon>{{ u.estado === 'ACTIVO' ? 'delete_sweep' : 'settings_backup_restore' }}</mat-icon>
+            <mat-icon>{{ u.estado === 'ACTIVO' ? 'delete_sweep' : 'restore' }}</mat-icon>
           </button>
         </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-slate-50 h-24 transition-all"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-slate-50 h-28 transition-colors"></tr>
     </table>
 
     <!-- PAGINACIÓN ESTILO FIGMA -->
@@ -122,20 +137,19 @@
         <button class="pagination-btn">Siguiente</button>
       </div>
     </footer>
+  </div>
 
 
-</div>
 
-
-  <!-- 3. BOTÓN CRUD CENTRADO (#001C3B) -->
+  <!-- 3. BOTÓN CRUD CENTRADO -->
   <div class="flex justify-center mb-16">
     <button (click)="toggleForm()" class="bg-[#001C3B] text-white px-20 py-7 rounded-[2.5rem] shadow-2xl flex items-center gap-4 hover:scale-105 transition-all group">
       <mat-icon class="scale-150 group-hover:rotate-90 transition-all">{{ isFormVisible() ? 'close' : 'add' }}</mat-icon>
-      <span class="text-xl font-black uppercase tracking-tighter">{{ isFormVisible() ? 'Cerrar Panel' : 'Vincular Nuevo Integrante' }}</span>
+      <span class="text-xl font-black uppercase tracking-tighter">{{ isFormVisible() ? 'Cerrar' : 'Vincular Integrante' }}</span>
     </button>
   </div>
 
-  <!-- 4. FORMULARIO BENTO (Con Campo Nombre) -->
+  <!-- 4. FORMULARIO CRUD -->
   @if (isFormVisible()) {
     <div class="bg-white p-12 rounded-[4rem] shadow-2xl border-b-[20px] border-[#005CAD] mb-16 animate-in">
       <h2 class="text-3xl font-black text-[#001C3B] mb-10 uppercase italic flex items-center gap-4">
@@ -143,44 +157,48 @@
         {{ isEditing() ? 'Modificar Registro' : 'Nuevo Registro' }}
       </h2>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div class="flex flex-col gap-2">
           <label class="text-[10px] font-black text-gray-400 uppercase ml-2">Nombre</label>
-          <input [(ngModel)]="currentUsuario.nombre" placeholder="Nombre completo" class="filter-input !bg-slate-50 font-bold border-none p-5 rounded-2xl outline-none shadow-inner">
+          <input [(ngModel)]="currentUsuario.nombre" placeholder="Nombre completo" class="filter-input !bg-slate-50 font-bold">
         </div>
         <div class="flex flex-col gap-2">
           <label class="text-[10px] font-black text-gray-400 uppercase ml-2">Email</label>
-          <input [(ngModel)]="currentUsuario.email" placeholder="ejemplo@sge.com" class="filter-input !bg-slate-50 font-bold border-none p-5 rounded-2xl outline-none shadow-inner">
+          <input [(ngModel)]="currentUsuario.email" placeholder="ejemplo@sge.com" class="filter-input !bg-slate-50 font-bold">
         </div>
         <div class="flex flex-col gap-2">
           <label class="text-[10px] font-black text-gray-400 uppercase ml-2">Password</label>
-          <input [(ngModel)]="currentUsuario.password" type="password" placeholder="••••••••" class="filter-input !bg-slate-50 border-none p-5 rounded-2xl outline-none shadow-inner">
+          <input [(ngModel)]="currentUsuario.password" type="password" placeholder="••••••••" class="filter-input !bg-slate-50">
         </div>
         <div class="flex flex-col gap-2">
           <label class="text-[10px] font-black text-gray-400 uppercase ml-2">Rol</label>
-          <select [(ngModel)]="currentUsuario.rol" class="filter-input !bg-slate-50 font-black text-[#005CAD] border-none p-5 rounded-2xl outline-none shadow-inner">
-            <option value="ADMIN">🛡️ ADMINISTRADOR</option> ️
+          <select [(ngModel)]="currentUsuario.rol" class="filter-input !bg-slate-50 font-black text-[#005CAD]">
+            <option value="ADMIN">🛡️ ADMINISTRADOR</option>
             <option value="MONITOR">🔍 MONITOR</option>
           </select>
         </div>
       </div>
       <div class="flex justify-center mt-12">
         <button (click)="onSave()" class="bg-[#005CAD] text-white px-20 py-5 rounded-2xl font-black text-xl hover:bg-[#001C3B] transition-all shadow-xl">
-          {{ isEditing() ? 'GUARDAR CAMBIOS' : 'CONFIRMAR REGISTRO' }}
+          {{ isEditing() ? 'GUARDAR CAMBIOS' : 'CONFIRMAR VÍNCULO' }}
         </button>
       </div>
     </div>
   }
 
-  <!-- 5. CARDS DESCRIPCIONES DE ROL -->
+  <!-- 5. CARDS -> DESCRIPCIONES DE ROL (A la base del Figma) -->
   <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-    <div class="bg-white p-12 rounded-[3.5rem] shadow-xl flex gap-8 items-center">
+    <!--CARD ADMINISTRADOR -->
+
+
+    <div class="bg-white p-12 rounded-[3.5rem] shadow-xl flex gap-8 items-center"> <!--STYLES BORDER CARD -->
       <mat-icon class="text-[#001C3B] scale-[2.5]">admin_panel_settings</mat-icon>
       <div>
         <h5 class="font-black text-[#001C3B] uppercase text-sm mb-2 tracking-widest">ADMINISTRADOR</h5>
         <p class="text-sm text-slate-500 leading-relaxed font-medium">Control total del ecosistema, gestión de eventos y auditoría de seguridad avanzada.</p>
       </div>
     </div>
+    <!--CARD ADMINISTRADOR -->
     <div class="bg-white p-12 rounded-[3.5rem] shadow-xl flex gap-8 items-center">
       <mat-icon class="text-[#0583F2] scale-[2.5]">visibility</mat-icon>
       <div>
@@ -190,4 +208,6 @@
     </div>
   </div>
 
+
 </div>
+
