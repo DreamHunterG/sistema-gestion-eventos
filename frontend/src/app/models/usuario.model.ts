@@ -4,11 +4,9 @@ export interface Usuario {
   email: string;
   rol: 'ADMIN' | 'MONITOR' | 'PARTICIPANTE';
   estado: 'ACTIVO' | 'INACTIVO';
-  // 🔑 El password ya no vive aquí para evitar fugas de datos
 }
 
-// Creamos una interfaz aparte solo para el momento de crear/editar
+// 🔑 Esta interfaz extiende a la anterior y SÍ permite la contraseña
 export interface UsuarioRequest extends Usuario {
   password?: string;
 }
-
