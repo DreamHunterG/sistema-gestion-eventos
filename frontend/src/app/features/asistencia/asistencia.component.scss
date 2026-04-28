@@ -1,0 +1,17 @@
+.animate-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.filter-input {
+  @apply w-full p-4 rounded-2xl outline-none border-none shadow-inner text-sm font-bold bg-slate-50 text-slate-700 transition-all focus:ring-2 ring-blue-100;
+}
+
+// Estilo para el círculo de aforo
+circle {
+  transition: stroke-dashoffset 0.8s ease-in-out;
+}

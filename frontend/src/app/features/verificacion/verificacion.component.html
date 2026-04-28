@@ -1,1 +1,42 @@
-<p>verificacion works!</p>
+<div class="h-screen w-full bg-white flex flex-col items-center justify-center font-sans p-6 animate-in">
+
+  <div class="w-full max-w-2xl text-center">
+    <div class="bg-blue-50 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner">
+      <mat-icon class="text-sge-primary scale-[2.5]">verified_user</mat-icon>
+    </div>
+
+    <h1 class="text-5xl font-black text-slate-800 tracking-tighter mb-4">Verificar Autenticidad de Certificado</h1>
+    <p class="text-gray-400 text-lg mb-12 max-w-lg mx-auto">Valida la legitimidad de tus logros académicos mediante nuestro sistema de registro seguro.</p>
+
+    <div class="bg-white p-2 rounded-[2.5rem] shadow-2xl border border-gray-100 flex items-center gap-4 pr-4">
+      <mat-icon class="text-slate-200 ml-6 scale-125">fingerprint</mat-icon>
+      <input type="text" [(ngModel)]="hashInput"
+             placeholder="Ingresa el Hash de seguridad (64 caracteres)..."
+             class="w-full p-6 outline-none text-lg font-bold text-slate-700">
+      <button (click)="validar()" class="bg-sge-primary text-white px-10 py-5 rounded-[1.8rem] font-black text-lg hover:bg-sge-navy transition-all shadow-lg">
+        Validar Logro
+      </button>
+    </div>
+
+    <!-- RESULTADO DINÁMICO -->
+    @if (resultado()) {
+      <div class="mt-12 p-8 rounded-[2.5rem] animate-in" [class]="resultado().valido ? 'bg-green-50 border-2 border-green-200' : 'bg-red-50 border-2 border-red-200'">
+        <mat-icon [class]="resultado().valido ? 'text-green-600' : 'text-red-500'" class="scale-[2] mb-4">
+          {{resultado().valido ? 'check_circle' : 'error'}}
+        </mat-icon>
+        <h2 class="text-xl font-black" [class]="resultado().valido ? 'text-green-800' : 'text-red-800'">
+          {{resultado().valido ? '¡Certificado Auténtico!' : 'Registro no encontrado'}}
+        </h2>
+        @if (resultado().valido) {
+          <p class="text-green-700 font-bold mt-2">Participante: {{resultado().participante}}</p>
+          <p class="text-green-600 text-sm italic">{{resultado().evento}}</p>
+        }
+      </div>
+    }
+
+    <footer class="mt-16 flex items-center justify-center gap-3 text-gray-300">
+      <mat-icon class="scale-75">shield</mat-icon>
+      <span class="text-[10px] font-black uppercase tracking-[0.3em]">Encriptación de Grado Institucional</span>
+    </footer>
+  </div>
+</div>
