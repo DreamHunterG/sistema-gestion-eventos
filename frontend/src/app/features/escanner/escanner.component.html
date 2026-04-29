@@ -1,0 +1,58 @@
+<div class="min-h-screen bg-[#F2F2F2] p-10 font-sans animate-in">
+
+  <header class="max-w-6xl mx-auto mb-12 text-center lg:text-left">
+    <h1 class="text-[42px] font-black text-[#001C3B] tracking-tighter uppercase italic">Control de Acceso</h1>
+    <p class="text-gray-400 font-medium text-lg italic">Validación táctica de identidad digital en campo.</p>
+  </header>
+
+  <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+
+    <!-- LADO IZQUIERDO: CÁMARA (HU-13) -->
+    <div class="bg-white p-8 rounded-[3rem] shadow-2xl flex flex-col items-center border border-gray-50">
+      <div class="relative w-full aspect-square bg-black rounded-[2.5rem] overflow-hidden border-8 border-slate-100 shadow-inner">
+        <ngx-scanner-qrcode #action="scanner" [config]="config" (event)="onEvent($event)"></ngx-scanner-qrcode>
+
+        <!-- Guía Visual Figma -->
+        <div class="absolute inset-0 border-[50px] border-black/50 pointer-events-none"></div>
+        <div class="absolute inset-[70px] border-2 border-[#F3E742] rounded-3xl animate-pulse"></div>
+      </div>
+
+      <div class="mt-8 flex gap-4">
+        <button (click)="action.isStart ? action.stop() : action.start()"
+                [class]="action.isStart ? 'bg-red-500' : 'bg-[#0583F2]'"
+                class="text-white px-10 py-4 rounded-2xl font-black text-xs uppercase shadow-xl transition-all">
+          {{ action.isStart ? 'Apagar Cámara' : 'Encender Cámara' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- LADO DERECHO: ENTRADA MANUAL (HU-14) -->
+    <div class="bg-white p-12 rounded-[3.5rem] shadow-2xl border-t-[15px] border-[#F3E742]">
+      <h2 class="text-3xl font-black text-slate-800 mb-2 tracking-tighter uppercase italic">Registro Manual</h2>
+      <p class="text-gray-400 font-big italic mb-10 text-sm">Contingencia operativa para códigos no legibles.</p>
+
+      <div class="space-y-8">
+        <div class="flex flex-col gap-3">
+          <label class="text-[10px] font-black text-[#0583F2] uppercase ml-1 tracking-widest">ID del Participante</label>
+          <input type="number" [(ngModel)]="idManual"
+                 placeholder="Digita el código aquí..."
+                 class="w-full p-6 bg-slate-50 rounded-2xl border-none outline-none font-black text-2xl text-[#001C3B] shadow-inner">
+        </div>
+
+        <button (click)="procesarIngreso(idManual)"
+                [disabled]="!idManual"
+                class="w-full bg-[#001C3B] text-white py-8 rounded-2xl font-black text-xl shadow-2xl hover:scale-[1.02] transition-all disabled:opacity-20 uppercase tracking-[0.2em]">
+          Validar Ingreso
+        </button>
+      </div>
+
+      <div class="mt-8 p- bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-4">
+        <mat-icon class="text-sge-primary scale-125">verified</mat-icon>
+        <p class="text-[12px] text-slate-500 font-bold leading-tight m-0">
+          La validación habilita automáticamente el Certificado Autenticado para descarga inmediata.
+        </p>
+      </div>
+    </div>
+
+  </main>
+</div>

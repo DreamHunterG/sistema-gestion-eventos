@@ -105,8 +105,15 @@ export class AsistenciaComponent implements OnInit {
     });
   }
 
+  // Acción para descargar el certificado, ahora con el nombre incluido
   descargar(id: number) {
-    this.participanteService.descargarCertificado(id);
+    // Buscamos al participante en la lista local para obtener su nombre
+    const p = this.participantes().find(part => part.id === id);
+    if (p) {
+      // Ahora enviamos los 2 datos que el servicio pide: ID y Nombre
+      this.participanteService.descargarCertificado(p.id, p.nombreCompleto);
+      this.notificar('Generando diploma oficial...', 'success');
+    }
   }
 
   private notificar(msg: string, tipo: string) {

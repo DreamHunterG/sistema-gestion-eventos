@@ -33,7 +33,24 @@ export class ParticipanteService {
   }
 
   // HU-18: Descarga PDF
-  descargarCertificado(id: number) {
-    window.open(`${this.apiUrl}/download/${id}`, '_blank');
+  descargarCertificado(id: number, nombreParticipante: string) {
+    const token = localStorage.getItem('sge_token');
+
+    // Llamamos al endpoint del backend
+    this.http.get(`http://localhost:8080/api/participantes/download/${id}`, {
+      responseType: 'blob', // 🔑 CRÍTICO: Le decimos a Angular que viene un archivo, no un texto
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).subscribe({
+      next: (blob) => {
+        // Creamos un link invisible para descargar el archivo
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Certificado_${nombreParticipante.replace(/\s+/g, '_')}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => console.error('Error al descargar el PDF', err)
+    });
   }
 }
