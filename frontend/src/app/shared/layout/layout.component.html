@@ -65,8 +65,9 @@
 
     <!-- Sección Inferior (Botón y Logout) -->
     <div>
-      <button class="w-full bg-sge-primary hover:bg-sge-navy text-white py-3 rounded-xl font-bold text-xs shadow-lg shadow-blue-100 mb-6 active:scale-95 transition-all uppercase tracking-wider">
-        Solicitar Recompensa
+      <button (click)="solicitarRecompensa()"
+              class="w-full bg-[#0583F2] hover:bg-[#005CAD] text-white py-4 rounded-2xl font-black text-xs shadow-xl mb-8 transition-all active:scale-95 uppercase tracking-widest">
+        ✨ Solicitar Recompensa
       </button>
 
       <div class="flex flex-col gap-4 text-gray-400 px-2">

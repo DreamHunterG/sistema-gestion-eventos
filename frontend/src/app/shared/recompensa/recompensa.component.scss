@@ -1,0 +1,10 @@
+:host {
+  display: block;
+  background: transparent;
+}
+
+// Quitamos el fondo blanco por defecto del modal de Material
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
