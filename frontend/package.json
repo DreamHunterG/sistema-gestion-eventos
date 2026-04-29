@@ -20,6 +20,9 @@
     "@angular/material": "^21.2.7",
     "@angular/platform-browser": "^21.2.0",
     "@angular/router": "^21.2.0",
+    "canvas": "^3.2.3",
+    "canvas-confetti": "^1.9.4",
+    "confetti": "^3.0.4",
     "ngx-scanner-qrcode": "^1.8.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
@@ -28,6 +31,7 @@
     "@angular/build": "^21.2.7",
     "@angular/cli": "^21.2.7",
     "@angular/compiler-cli": "^21.2.0",
+    "@types/canvas-confetti": "^1.9.0",
     "autoprefixer": "^10.4.19",
     "jsdom": "^28.0.0",
     "postcss": "^8.4.38",

@@ -1,42 +1,78 @@
-<div class="h-screen w-full bg-white flex flex-col items-center justify-center font-sans p-6 animate-in">
+<div class="min-h-screen bg-[#F2F2F2] flex flex-col items-center justify-center font-sans p-6 animate-in">
 
-  <div class="w-full max-w-2xl text-center">
-    <div class="bg-blue-50 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner">
-      <mat-icon class="text-sge-primary scale-[2.5]">verified_user</mat-icon>
+  <!-- TARJETA CENTRAL PREMIUM -->
+  <div class="w-full max-w-4xl bg-white p-12 rounded-[3.5rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-50 text-center relative overflow-hidden">
+
+    <!-- Icono de Red de Confianza -->
+    <div class="bg-blue-50 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-10 shadow-inner">
+      <mat-icon class="text-[#0583F2] scale-150">verified_user</mat-icon>
     </div>
 
-    <h1 class="text-5xl font-black text-slate-800 tracking-tighter mb-4">Verificar Autenticidad de Certificado</h1>
-    <p class="text-gray-400 text-lg mb-12 max-w-lg mx-auto">Valida la legitimidad de tus logros académicos mediante nuestro sistema de registro seguro.</p>
+    <h1 class="text-[52px] font-black text-slate-800 tracking-tighter mb-4 leading-none uppercase italic">Verificar Autenticidad de Constancia</h1>
+    <p class="text-gray-400 text-lg mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
+      Valida la legitimidad de tus logros obtenidos mediante <b>nuestro sistema de registro.</b>
+    </p>
 
-    <div class="bg-white p-2 rounded-[2.5rem] shadow-2xl border border-gray-100 flex items-center gap-4 pr-4">
-      <mat-icon class="text-slate-200 ml-6 scale-125">fingerprint</mat-icon>
-      <input type="text" [(ngModel)]="hashInput"
-             placeholder="Ingresa el Hash de seguridad (64 caracteres)..."
-             class="w-full p-6 outline-none text-lg font-bold text-slate-700">
-      <button (click)="validar()" class="bg-sge-primary text-white px-10 py-5 rounded-[1.8rem] font-black text-lg hover:bg-sge-navy transition-all shadow-lg">
-        Validar Logro
-      </button>
+    <!-- BARRA DE BÚSQUEDA TIPO GOOGLE -->
+    <div class="bg-[#E9E9E9] p-2 rounded-[2.5rem] flex items-center gap-4 pr-4 mb-8 focus-within:ring-4 ring-blue-100 transition-all">
+      <mat-icon style="color: #666000"  class="text-slate-400 ; ml-6 scale-125">search</mat-icon>
+      <input type="text" [(ngModel)]="query" (keyup.enter)="consultar()"
+             placeholder="Ingresa tu email institucional o el Hash de seguridad..."
+             class="w-full p-5 outline-none text-lg font-bold text-slate-700 bg-transparent placeholder:text-slate-300">
     </div>
 
-    <!-- RESULTADO DINÁMICO -->
-    @if (resultado()) {
-      <div class="mt-12 p-8 rounded-[2.5rem] animate-in" [class]="resultado().valido ? 'bg-green-50 border-2 border-green-200' : 'bg-red-50 border-2 border-red-200'">
-        <mat-icon [class]="resultado().valido ? 'text-green-600' : 'text-red-500'" class="scale-[2] mb-4">
-          {{resultado().valido ? 'check_circle' : 'error'}}
-        </mat-icon>
-        <h2 class="text-xl font-black" [class]="resultado().valido ? 'text-green-800' : 'text-red-800'">
-          {{resultado().valido ? '¡Certificado Auténtico!' : 'Registro no encontrado'}}
-        </h2>
-        @if (resultado().valido) {
-          <p class="text-green-700 font-bold mt-2">Participante: {{resultado().participante}}</p>
-          <p class="text-green-600 text-sm italic">{{resultado().evento}}</p>
-        }
+    <button (click)="consultar()" [disabled]="loading()"
+            class="bg-[#0583F2] text-white px-20 py-6 rounded-3xl font-black text-xl hover:bg-[#005CAD] transition-all shadow-xl active:scale-95 disabled:opacity-50 min-w-[280px]">
+      {{ loading() ? 'CONSULTANDO RED...' : 'Validar Logro' }}
+    </button>
+
+    <!-- 🎊 TABLA DE RESULTADOS (DISEÑO TIPO SENA) -->
+    @if (busquedaRealizada() && resultados().length > 0) {
+      <div class="mt-16 animate-in border-t pt-10">
+        <div class="overflow-hidden rounded-[2rem] border border-gray-100 shadow-sm">
+          <table class="w-full text-left">
+            <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+            <tr>
+              <th class="p-6">Nombre del Logro</th>
+              <th class="p-6">Identificador / Hash</th>
+              <th class="p-6 text-center">Certificación</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y text-slate-700 bg-white">
+              @for (item of resultados(); track item.id) {
+                <tr class="hover:bg-blue-50/40 transition-colors">
+                  <td class="p-6">
+                    <p class="font-black m-0 text-sm text-slate-800 uppercase">{{ item.evento?.nombre || item.evento }}</p>
+                    <p class="text-[9px] text-[#666000] font-bold uppercase tracking-wider mt-1">{{ item.evento?.tipoEvento || 'Oficial' }}</p>
+                  </td>
+                  <td class="p-6">
+                    <code class="text-[10px] text-slate-400 font-mono break-all">{{ item.certificadoHash || item.hash }}</code>
+                  </td>
+                  <td class="p-6 text-center">
+                    <button (click)="descargar(item.id)" class="bg-[#F3E742] text-[#666000] px-6 py-2.5 rounded-xl text-[9px] font-black hover:bg-[#0583F2] hover:text-[#ffffff] transition-all shadow-md">
+                      DESCARGAR PDF
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    } @else if (busquedaRealizada()) {
+      <!-- MENSAJE DE ERROR EMPÁTICO (Tu diseño 404 adaptado) -->
+      <div class="mt-12 p-10 bg-red-50 rounded-[3rem] border border-red-100 animate-in text-center">
+        <mat-icon class="text-red-400 scale-[2] mb-4">report_problem</mat-icon>
+        <h2 class="text-xl font-black text-red-800 m-0">No se encontraron registros</h2>
+        <p class="text-red-600 text-sm mt-2 italic font-medium">Ups, parece que el enlace o correo no es válido. Verifica los datos y continúa.</p>
       </div>
     }
 
-    <footer class="mt-16 flex items-center justify-center gap-3 text-gray-300">
-      <mat-icon class="scale-75">shield</mat-icon>
-      <span class="text-[10px] font-black uppercase tracking-[0.3em]">Encriptación de Grado Institucional</span>
-    </footer>
+  </div>
+
+  <!-- FOOTER INSTITUCIONAL -->
+  <div class="mt-12 flex items-center gap-4 text-slate-400 opacity-60">
+    <mat-icon style="color: #666000;" class="scale-125">stars</mat-icon>
+    <span class="text-[14px]  text-[#666000] uppercase tracking-[0.4em]">Autenticación Verificada</span>
   </div>
 </div>
