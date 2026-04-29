@@ -19,15 +19,10 @@
       <nav class="flex flex-col gap-1">
         <a routerLink="/dashboard" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
            class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">dashboard</mat-icon>
-          <span class="text-sm">Dashboard</span>
-        </a>
-
-        <a routerLink="/eventos" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
-           class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
           <mat-icon class="scale-90">event</mat-icon>
           <span class="text-sm">Eventos</span>
         </a>
+
 
         <a routerLink="/importar" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
            class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
@@ -57,12 +52,11 @@
           <span class="text-sm">Escáner de Acceso</span>
         </a>
 
-        <a routerLink="/verificacion" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
+        <a routerLink="/verificar" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
            class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">qr_code_scanner</mat-icon>
+          <mat-icon class="scale-90">verified</mat-icon>
           <span class="text-sm">Verificación</span>
         </a>
-
 
 
 
@@ -95,10 +89,6 @@
     <header class="h-16 bg-white border-b flex items-center justify-between px-10 shrink-0">
       <div class="flex gap-6 text-[11px] font-bold uppercase tracking-widest items-center">
         <span class="text-sge-primary">SGE Pro</span>
-        <div class="w-[1px] h-4 bg-gray-200"></div>
-        <span class="text-gray-300">Dashboard</span>
-        <span class="text-gray-300">Eventos</span>
-        <span class="text-gray-300">Verificación</span>
       </div>
 
       <!-- Avatar Usuario con Protección contra Undefined -->
@@ -109,7 +99,7 @@
     </span>
           <!-- 🔑 SOLUCIÓN TS2532: Añadimos el ? antes del .email y un texto de respaldo -->
           <span class="text-[9px] block text-slate-300 lowercase italic">
-      {{ authService.currentUser()?.email || 'Sesión no iniciada' }}
+      {{ authService.currentUser()?.email || 'Sesión iniciada' }}
     </span>
         </div>
         <div class="w-9 h-9 bg-gray-100 rounded-full overflow-hidden border-2 border-white shadow-sm flex items-center justify-center text-sge-navy font-black text-xs">

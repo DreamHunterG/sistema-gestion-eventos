@@ -3,26 +3,21 @@ import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   // ==========================================
-  // 1. ZONA PÚBLICA (LANDING PAGE - Sin Login)
+  // 1. ZONA PÚBLICA (SOLO LOGIN)
   // ==========================================
   {
     path: 'login',
     loadComponent: () => import('./features/login/login.component').then(m => m.LoginComponent),
     title: 'SGE - Acceso'
   },
-  {
-    path: 'verificar', // 🔑 Esta es tu LANDING PÚBLICA tipo Google
-    loadComponent: () => import('./features/verificacion/verificacion.component').then(m => m.VerificacionComponent),
-    title: 'SGE - Validación Oficial'
-  },
 
   // ==========================================
-  // 2. ZONA PRIVADA (SIDEBAR AZUL - Con Login)
+  // 2. ZONA PRIVADA (CON SIDEBAR Y PROTEGIDA)
   // ==========================================
   {
     path: '',
     loadComponent: () => import('./shared/layout/layout.component').then(m => m.LayoutComponent),
-    canActivate: [authGuard], // 🛡️ El portero solo deja pasar a admin/monitor
+    canActivate: [authGuard],
     children: [
       {
         path: 'dashboard',
@@ -49,10 +44,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/escanner/escanner.component').then(m => m.EscannerComponent),
         title: 'SGE - Escáner QR'
       },
+      // 🔑 MOVIDO AQUÍ: Ahora 'verificar' mostrará el Sidebar y el Top Bar
       {
-        path: 'validar-interno', // 🔑 Verificación dentro del sistema
+        path: 'verificar',
         loadComponent: () => import('./features/verificacion/verificacion.component').then(m => m.VerificacionComponent),
-        title: 'SGE - Validar Logro'
+        title: 'SGE - Validación Oficial'
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
