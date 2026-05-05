@@ -1,9 +1,16 @@
 export interface Participante {
   id: number;
-  nombreCompleto: string;
-  email: string;
+  persona: {
+    nombreCompleto: string;
+    email: string;
+  };
+  evento: {
+    id: number;
+    nombre: string;
+  };
   asistio: boolean;
   certificadoHash?: string;
-  fechaRegistro?: string;
-  evento?: any; //vinculación con el evento al que asistió, si es necesario
+  // Propiedades virtuales para que tu HTML actual no se rompa
+  nombreCompleto?: string;
+  email?: string;
 }

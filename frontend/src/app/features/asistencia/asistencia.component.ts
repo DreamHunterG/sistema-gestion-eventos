@@ -5,25 +5,21 @@ import { ParticipanteService } from '../../services/participante.service';
 import { EventoService } from '../../services/evento.service';
 import { Participante } from '../../models/participante.model';
 import { Evento } from '../../models/evento.model';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+
+// Material Imports (🔑 Imprescindibles para que el HTML funcione)
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-asistencia',
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
-    MatIconModule,
-    MatTableModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatSelectModule,
-    MatFormFieldModule
+    CommonModule, FormsModule, MatIconModule, MatTableModule,
+    MatButtonModule, MatSelectModule, MatFormFieldModule, MatSnackBarModule
   ],
   templateUrl: './asistencia.component.html',
   styleUrl: './asistencia.component.scss'
@@ -33,52 +29,44 @@ export class AsistenciaComponent implements OnInit {
   private eventoService = inject(EventoService);
   private snackBar = inject(MatSnackBar);
 
-  // --- 📊 ESTADOS DE DATOS ---
+  // --- 📊 SIGNALS (Lo que el HTML pide) ---
   eventos = signal<Evento[]>([]);
   eventoSeleccionado = signal<number | null>(null);
   participantes = signal<Participante[]>([]);
-
-  // --- ⚙️ ESTADOS DE INTERFAZ (🔑 AQUÍ SE CORRIGE EL ERROR) ---
-  showFilters = signal(false);
   searchTerm = signal('');
-  currentPage = signal(1);
-  displayedColumns: string[] = ['nombre', 'email', 'estado', 'acciones'];
+  searchAforo = signal<number | null>(null);
+  filterTipo = signal('');
+  filterModalidad = signal('');
+  dateStart = signal('');
+  dateEnd = signal('');
+  showFilters = signal(false);
+  currentPage = signal(1); // 🔑 Corregido: Ya existe para la paginación
 
-  // --- 🧠 MOTOR DE CÁLCULO DINÁMICO ---
+  // --- 🧠 CÁLCULOS ---
+  asistentesCount = computed(() => this.participantes().filter(p => p.asistio).length);
 
-  // Cuenta cuántos han asistido en el evento actual
-  asistentesCount = computed(() =>
-    this.participantes().filter(p => p.asistio).length
-  );
-
-  // Calcula el porcentaje para el círculo visual del Figma
   calculatePercent() {
     if (this.participantes().length === 0) return 0;
     return Math.round((this.asistentesCount() / this.participantes().length) * 100);
   }
 
-  // Filtra la tabla según el nombre o email escrito
   filteredParticipantes = computed(() => {
     const term = this.searchTerm().toLowerCase();
     return this.participantes().filter(p =>
-      p.nombreCompleto.toLowerCase().includes(term) ||
-      p.email.toLowerCase().includes(term)
+      p.persona.nombreCompleto.toLowerCase().includes(term) ||
+      p.persona.email.toLowerCase().includes(term)
     );
   });
 
-  // --- 🚀 ACCIONES ---
+  displayedColumns: string[] = ['nombre', 'email', 'estado', 'acciones'];
 
-  ngOnInit() {
-    this.cargarEventos();
-  }
+  ngOnInit() { this.cargarEventos(); }
 
   cargarEventos() {
-    this.eventoService.getEventos().subscribe({
-      next: (data) => this.eventos.set(data),
-      error: () => this.notificar('Falla al conectar con el servidor', 'error')
-    });
+    this.eventoService.getEventos().subscribe(data => this.eventos.set(data));
   }
 
+  // --- 🚀 FUNCIONES DE ACCIÓN (Placeholders funcionales) ---
   onEventoChange(id: number) {
     this.eventoSeleccionado.set(id);
     this.cargarLista();
@@ -86,40 +74,34 @@ export class AsistenciaComponent implements OnInit {
 
   cargarLista() {
     this.participanteService.getParticipantes().subscribe({
-      next: (data: Participante[]) => {
-        // Vinculamos participantes solo al evento elegido
-        const filtrados = data.filter(p => p.evento?.id === this.eventoSeleccionado());
+      next: (data) => {
+        const filtrados = data.filter(p => p.evento.id === this.eventoSeleccionado());
         this.participantes.set(filtrados);
-      },
-      error: () => this.notificar('Error al cargar asistentes', 'error')
+      }
     });
   }
 
   checkin(id: number) {
-    this.participanteService.registrarAsistencia(id).subscribe({
-      next: () => {
-        this.notificar('¡Ingreso Validado! Registro exitoso.', 'success');
-        this.cargarLista(); // Refresca para actualizar el Hash y el círculo
-      },
-      error: () => this.notificar('No se pudo procesar el ingreso', 'error')
+    this.participanteService.registrarAsistencia(id).subscribe(() => {
+      this.notificar('¡Ingreso Validado!', 'success');
+      this.cargarLista();
     });
   }
 
-  // Acción para descargar el certificado, ahora con el nombre incluido
   descargar(id: number) {
-    // Buscamos al participante en la lista local para obtener su nombre
     const p = this.participantes().find(part => part.id === id);
-    if (p) {
-      // Ahora enviamos los 2 datos que el servicio pide: ID y Nombre
-      this.participanteService.descargarCertificado(p.id, p.nombreCompleto);
-      this.notificar('Generando diploma oficial...', 'success');
-    }
+    if (p) this.participanteService.descargarCertificado(p.id, p.persona.nombreCompleto);
+  }
+
+  verHistorial(email: string) {
+    alert('Consultando historial para: ' + email);
   }
 
   private notificar(msg: string, tipo: string) {
-    this.snackBar.open(msg, 'Cerrar', {
-      duration: 3000,
-      panelClass: tipo === 'success' ? ['bg-green-600'] : ['bg-red-600']
-    });
+    this.snackBar.open(msg, 'OK', { duration: 3000, panelClass: tipo === 'success' ? ['bg-green-600'] : ['bg-red-600'] });
+  }
+
+  getIcon(tipo: string) {
+    return tipo === 'TORNEO' ? 'emoji_events' : 'school';
   }
 }

@@ -1,118 +1,96 @@
-<!-- 1. CONTENEDOR RAÍZ -->
-<div class="flex h-screen bg-[#F8FAFC] font-sans">
+<mat-sidenav-container class="h-screen bg-[#F8FAFC]">
 
-  <!-- 2. SIDEBAR (Navegación Lateral Izquierda) -->
-  <aside class="w-64 bg-white border-r flex flex-col justify-between p-6 shadow-sm z-20 shrink-0">
-    <div>
-      <!-- Identidad / Logo -->
-      <div class="flex items-center gap-3 mb-10">
-        <div class="w-10 h-10 bg-sge-navy rounded-lg flex items-center justify-center text-white font-black italic shadow-md">
-          S
+  <!-- BARRA LATERAL (SIDEBAR) -->
+  <mat-sidenav mode="side" opened class="w-72 bg-white border-r flex flex-col p-6 shadow-sm shrink-0 no-border-sidenav">
+
+    <div class="h-full flex flex-col justify-between">
+      <div>
+        <!-- Logo Branding -->
+        <div class="flex items-center gap-4 mb-12 p-2">
+          <div class="w-12 h-12 bg-[#001C3B] rounded-2xl flex items-center justify-center text-white font-black italic shadow-lg shadow-blue-900/20">S</div>
+          <div>
+            <h2 class="text-[#001C3B] font-black text-xl leading-none tracking-tighter">SGE PRO</h2>
+            <p class="text-[9px] text-slate-300 font-bold uppercase tracking-[0.3em] mt-1">Cloud Integrity</p>
+          </div>
         </div>
-        <div>
-          <h2 class="text-sge-navy font-bold text-sm leading-tight">SGE</h2>
-          <p class="text-gray-400 text-[10px] uppercase tracking-widest font-semibold">Plataforma</p>
-        </div>
-      </div>
 
-      <!-- Menú de Funcionalidades -->
-      <nav class="flex flex-col gap-1">
-        <a routerLink="/dashboard" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
-           class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">event</mat-icon>
-          <span class="text-sm">Eventos</span>
-        </a>
-
-        <a routerLink="/importar" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
-           class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">cloud_upload</mat-icon>
-          <span class="text-sm">Carga Masiva</span>
-        </a>
-
-        <!-- 🛡️ ZONA DE ADMINISTRACIÓN (Solo ADMIN) -->
-        @if (authService.currentUser()?.rol === 'ADMIN') {
-          <a routerLink="/usuarios" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
-             class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
-            <mat-icon class="scale-90">groups</mat-icon>
-            <span class="text-sm">Usuarios</span>
+        <!-- Menú Dinámico con RBAC (Control de Acceso) -->
+        <nav class="flex flex-col gap-2">
+          <a routerLink="/dashboard" routerLinkActive="active-link" class="nav-item">
+            <mat-icon>dashboard</mat-icon> <span>Dashboard</span>
           </a>
 
-          <!-- 🔑 NUEVO: Auditoría System (ROOM_911) -->
+          <a routerLink="/importar" routerLinkActive="active-link" class="nav-item">
+            <mat-icon>cloud_upload</mat-icon> <span>Carga Masiva</span>
+          </a>
 
-            @if (authService.currentUser()?.rol === 'ADMIN') {
-              <a routerLink="/auditoria" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
-                 class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
-                <mat-icon class="scale-90">policy</mat-icon> <!-- Icono de normativa/policía -->
-                <span class="text-sm">Auditoría</span>
-              </a>
-            }
+          <!-- 🛡️ SOLO PARA ADMINISTRADORES -->
+          @if (esAdmin()) {
+            <a routerLink="/usuarios" routerLinkActive="active-link" class="nav-item">
+              <mat-icon>groups</mat-icon> <span>Equipo de Red</span>
+            </a>
 
-        }
+            <a routerLink="/auditoria" routerLinkActive="active-link" class="nav-item border-l-4 border-[#F3E742]/50">
+              <mat-icon class="text-[#F3E742]">gavel</mat-icon> <span class="text-[#666000] font-black">Auditoría 911</span>
+            </a>
+          }
 
-        <a routerLink="/asistencia" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
-           class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">assignment_turned_in</mat-icon>
-          <span class="text-sm">Asistencia</span>
-        </a>
+          <a routerLink="/asistencia" routerLinkActive="active-link" class="nav-item">
+            <mat-icon>assignment_turned_in</mat-icon> <span>Asistencia</span>
+          </a>
 
-        <a routerLink="/escanner" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
-           class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">qr_code_2</mat-icon>
-          <span class="text-sm">Escáner de Acceso</span>
-        </a>
+          <a routerLink="/escanner" routerLinkActive="active-link" class="nav-item">
+            <mat-icon>qr_code_scanner</mat-icon> <span>Escáner QR</span>
+          </a>
 
-        <a routerLink="/verificar" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
-           class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">verified</mat-icon>
-          <span class="text-sm">Verificación</span>
-        </a>
-      </nav>
-    </div>
+          <a routerLink="/verificar" routerLinkActive="active-link" class="nav-item">
+            <mat-icon>verified</mat-icon> <span>Verificar Logro</span>
+          </a>
+        </nav>
+      </div>
 
-    <!-- Sección Inferior -->
-    <div>
-      <button (click)="solicitarRecompensa()"
-              class="w-full bg-[#0583F2] hover:bg-[#005CAD] text-white py-4 rounded-2xl font-black text-xs shadow-xl mb-8 transition-all active:scale-95 uppercase tracking-widest">
-        ✨ Solicitar Recompensa
-      </button>
+      <!-- Footer del Sidebar -->
+      <div class="pt-8 border-t border-slate-100">
+        <button (click)="solicitarRecompensa()"
+                class="w-full bg-[#0583F2] hover:bg-[#001C3B] text-white py-4 rounded-2xl font-black text-[11px] shadow-xl shadow-blue-200 mb-8 transition-all active:scale-95 uppercase tracking-widest flex items-center justify-center gap-2">
+          ✨ SOLICITAR RECOMPENSA
+        </button>
 
-      <div class="flex flex-col gap-4 text-gray-400 px-2">
-        <a href="#" class="flex items-center gap-2 text-[11px] no-underline text-inherit hover:text-sge-primary transition-colors">
-          <mat-icon class="text-sm">help_outline</mat-icon> Ayuda
-        </a>
-        <a (click)="logout()"
-           class="flex items-center gap-3 p-3 rounded-xl text-gray-400 cursor-pointer hover:bg-red-50 hover:text-red-600 transition-all group">
-          <mat-icon class="scale-90 group-hover:rotate-12 transition-transform">logout</mat-icon>
-          <span class="text-sm font-bold">Cerrar Sesión</span>
+        <a (click)="logout()" class="flex items-center gap-3 p-4 text-slate-400 cursor-pointer hover:text-red-500 transition-colors font-bold text-xs uppercase tracking-widest">
+          <mat-icon class="scale-90">logout</mat-icon> Cerrar Sesión
         </a>
       </div>
     </div>
-  </aside>
 
-  <!-- 3. ÁREA DE CONTENIDO -->
-  <main class="flex-1 flex flex-col overflow-hidden">
-    <header class="h-16 bg-white border-b flex items-center justify-between px-10 shrink-0">
-      <div class="flex gap-6 text-[11px] font-bold uppercase tracking-widest items-center">
-        <span class="text-sge-primary">Sistema de Gestión de Eventos</span>
+  </mat-sidenav>
+
+  <!-- CONTENIDO PRINCIPAL (Derecha) -->
+  <mat-sidenav-content class="bg-[#F2F2F2]">
+
+    <!-- Top Bar Dinámico -->
+    <header class="h-20 bg-white/80 backdrop-blur-md border-b flex items-center justify-between px-12 sticky top-0 z-10">
+      <div class="flex items-center gap-6">
+        <span class="text-[10px] font-black text-slate-300 uppercase tracking-[0.4em]">SGE Platform</span>
       </div>
 
-      <div class="flex items-center gap-3">
+      <!-- Perfil con Identidad Normalizada -->
+      <div class="flex items-center gap-5">
         <div class="text-right">
-          <span class="text-[10px] block font-bold text-gray-400 uppercase tracking-tighter">
-            {{ (authService.currentUser()?.rol === 'ADMIN') ? 'Administrador' : 'Monitor de Campo' }}
+          <span class="text-[10px] block font-black text-[#0583F2] uppercase tracking-widest">
+            {{ esAdmin() ? 'Administrador Maestro' : 'Monitor de Campo' }}
           </span>
-          <span class="text-[9px] block text-[#666000] lowercase italic">
-            {{ authService.currentUser()?.email || 'Sesión iniciada' }}
-          </span>
+          <span class="text-[9px] block text-slate-400 font-medium italic">{{ authService.currentUser()?.email }}</span>
         </div>
-        <div class="w-9 h-9 bg-gray-100 rounded-full overflow-hidden border-2 border-white shadow-sm flex items-center justify-center text-sge-navy font-black text-xs">
-          {{ authService.currentUser()?.email?.charAt(0)?.toUpperCase() || '?' }}
+        <div class="w-11 h-11 bg-[#001C3B] rounded-2xl flex items-center justify-center text-[#F3E742] font-black text-lg shadow-inner">
+          {{ authService.currentUser()?.email?.charAt(0).toUpperCase() }}
         </div>
       </div>
     </header>
 
-    <div class="flex-1 overflow-y-auto p-10">
+    <!-- Zona de Renderizado -->
+    <div class="p-8">
       <router-outlet></router-outlet>
     </div>
-  </main>
-</div>
+
+  </mat-sidenav-content>
+</mat-sidenav-container>
