@@ -1,7 +1,5 @@
 package com.sge.backend.services;
 
-import com.sge.backend.entities.Participante;
-import com.sge.backend.repositories.ParticipanteRepository;
 import com.sge.backend.entities.Evento;
 import com.sge.backend.repositories.EventoRepository;
 import com.sge.backend.dtos.ImportResponse;

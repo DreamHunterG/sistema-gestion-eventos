@@ -8,18 +8,19 @@ export class UsuarioService {
   private apiUrl = 'http://localhost:8080/api/usuarios';
   private http = inject(HttpClient);
 
-  getUsuarios(): Observable<Usuario[]> {
-    return this.http.get<Usuario[]>(this.apiUrl);
+  getUsuarios(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
   }
 
-  crearUsuario(u: UsuarioRequest): Observable<Usuario> {
-    return this.http.post<Usuario>(`${this.apiUrl}/registro`, u);
+  crearUsuario(u: UsuarioRequest): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/registro`, u);
   }
 
-  actualizarUsuario(id: number, u: UsuarioRequest): Observable<Usuario> {
-    return this.http.put<Usuario>(`${this.apiUrl}/${id}`, u);
+  actualizarUsuario(id: number, u: UsuarioRequest): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, u);
   }
 
+  // 🔑 Este método llama al @DeleteMapping de Java que hace el archivado lógico
   eliminarUsuario(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }

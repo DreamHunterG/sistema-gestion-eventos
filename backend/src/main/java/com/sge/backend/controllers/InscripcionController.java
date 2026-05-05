@@ -1,8 +1,7 @@
 package com.sge.backend.controllers;
 
 import com.sge.backend.dtos.ImportResponse;
-import com.sge.backend.entities.Participante;
-import com.sge.backend.services.ParticipanteService;
+import com.sge.backend.services.InscripcionService;
 import com.sge.backend.services.PDFService; // <--- NUEVA IMPORTACIÓN
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity; // <--- NUEVA IMPORTACIÓN
@@ -20,7 +19,7 @@ import java.util.List;
 public class ParticipanteController {
 
     @Autowired
-    private ParticipanteService participanteService;
+    private InscripcionService participanteService;
 
     @Autowired
     private PDFService pdfService; // Servicio para generar documentos PDF (HU-18)

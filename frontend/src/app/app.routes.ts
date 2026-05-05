@@ -3,16 +3,21 @@ import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   // ==========================================
-  // 1. ZONA PÚBLICA (SOLO LOGIN)
+  // 1. ZONA PÚBLICA (LIBRE - Sin Sidebar)
   // ==========================================
   {
     path: 'login',
     loadComponent: () => import('./features/login/login.component').then(m => m.LoginComponent),
-    title: 'SGE - Acceso'
+    title: 'SGE - Acceso al Portal'
+  },
+  {
+    path: 'verificar', // 🔑 LANDING PÚBLICA: No tiene canActivate
+    loadComponent: () => import('./features/verificacion/verificacion.component').then(m => m.VerificacionComponent),
+    title: 'SGE - Validación Oficial'
   },
 
   // ==========================================
-  // 2. ZONA PRIVADA (CON SIDEBAR Y PROTEGIDA)
+  // 2. ZONA PRIVADA (PROTEGIDA - Con Sidebar)
   // ==========================================
   {
     path: '',
@@ -32,35 +37,21 @@ export const routes: Routes = [
       {
         path: 'usuarios',
         loadComponent: () => import('./features/usuarios/usuarios.component').then(m => m.UsuariosComponent),
-        title: 'SGE - Equipo'
+        title: 'SGE - Gestión de Equipo'
       },
       {
         path: 'asistencia',
         loadComponent: () => import('./features/asistencia/asistencia.component').then(m => m.AsistenciaComponent),
-        title: 'SGE - Asistencia'
+        title: 'SGE - Control de Asistencia'
       },
       {
         path: 'escanner',
         loadComponent: () => import('./features/escanner/escanner.component').then(m => m.EscannerComponent),
         title: 'SGE - Escáner QR'
       },
-      // 🔑 MOVIDO AQUÍ: Ahora 'verificar' mostrará el Sidebar y el Top Bar
-      {
-        path: 'verificar',
-        loadComponent: () => import('./features/verificacion/verificacion.component').then(m => m.VerificacionComponent),
-        title: 'SGE - Validación Oficial'
-      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
-
-  // ==========================================
-  // 3. GESTIÓN DE ERRORES
-  // ==========================================
-  {
-    path: '404',
-    loadComponent: () => import('./features/error404/error404.component').then(m => m.Error404Component),
-    title: 'SGE - No encontrado'
-  },
+  { path: '404', loadComponent: () => import('./features/error404/error404.component').then(m => m.Error404Component) },
   { path: '**', redirectTo: '404' }
 ];
