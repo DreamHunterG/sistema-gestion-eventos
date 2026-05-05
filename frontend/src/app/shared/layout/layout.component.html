@@ -7,7 +7,7 @@
       <!-- Identidad / Logo -->
       <div class="flex items-center gap-3 mb-10">
         <div class="w-10 h-10 bg-sge-navy rounded-lg flex items-center justify-center text-white font-black italic shadow-md">
-
+          S
         </div>
         <div>
           <h2 class="text-sge-navy font-bold text-sm leading-tight">SGE</h2>
@@ -23,20 +23,30 @@
           <span class="text-sm">Eventos</span>
         </a>
 
-
         <a routerLink="/importar" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
            class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
           <mat-icon class="scale-90">cloud_upload</mat-icon>
           <span class="text-sm">Carga Masiva</span>
         </a>
 
-        <!-- 🛡️ SEGURIDAD: Solo el ADMIN ve este menú -->
+        <!-- 🛡️ ZONA DE ADMINISTRACIÓN (Solo ADMIN) -->
         @if (authService.currentUser()?.rol === 'ADMIN') {
           <a routerLink="/usuarios" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
              class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
             <mat-icon class="scale-90">groups</mat-icon>
             <span class="text-sm">Usuarios</span>
           </a>
+
+          <!-- 🔑 NUEVO: Auditoría System (ROOM_911) -->
+
+            @if (authService.currentUser()?.rol === 'ADMIN') {
+              <a routerLink="/auditoria" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
+                 class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
+                <mat-icon class="scale-90">policy</mat-icon> <!-- Icono de normativa/policía -->
+                <span class="text-sm">Auditoría</span>
+              </a>
+            }
+
         }
 
         <a routerLink="/asistencia" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
@@ -45,10 +55,9 @@
           <span class="text-sm">Asistencia</span>
         </a>
 
-
         <a routerLink="/escanner" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm"
            class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-medium no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">qr_code_2</mat-icon> <!-- 🔑 Icono intuitivo de QR -->
+          <mat-icon class="scale-90">qr_code_2</mat-icon>
           <span class="text-sm">Escáner de Acceso</span>
         </a>
 
@@ -57,13 +66,10 @@
           <mat-icon class="scale-90">verified</mat-icon>
           <span class="text-sm">Verificación</span>
         </a>
-
-
-
       </nav>
     </div>
 
-    <!-- Sección Inferior (Botón y Logout) -->
+    <!-- Sección Inferior -->
     <div>
       <button (click)="solicitarRecompensa()"
               class="w-full bg-[#0583F2] hover:bg-[#005CAD] text-white py-4 rounded-2xl font-black text-xs shadow-xl mb-8 transition-all active:scale-95 uppercase tracking-widest">
@@ -83,38 +89,30 @@
     </div>
   </aside>
 
-  <!-- 3. ÁREA DE CONTENIDO (Derecha) -->
+  <!-- 3. ÁREA DE CONTENIDO -->
   <main class="flex-1 flex flex-col overflow-hidden">
-
-    <!-- Barra Superior (Top Nav) Dinámica -->
     <header class="h-16 bg-white border-b flex items-center justify-between px-10 shrink-0">
       <div class="flex gap-6 text-[11px] font-bold uppercase tracking-widest items-center">
         <span class="text-sge-primary">Sistema de Gestión de Eventos</span>
       </div>
 
-      <!-- Avatar Usuario con Protección contra Undefined -->
       <div class="flex items-center gap-3">
         <div class="text-right">
-    <span class="text-[10px] block font-bold text-gray-400 uppercase tracking-tighter">
-      {{ (authService.currentUser()?.rol === 'ADMIN') ? 'Administrador' : 'Monitor de Campo' }}
-    </span>
-          <!-- 🔑 SOLUCIÓN TS2532: Añadimos el ? antes del .email y un texto de respaldo -->
-          <span class="text-[9px] block text-slate-300 lowercase italic">
-      {{ authService.currentUser()?.email || 'Sesión iniciada' }}
-    </span>
+          <span class="text-[10px] block font-bold text-gray-400 uppercase tracking-tighter">
+            {{ (authService.currentUser()?.rol === 'ADMIN') ? 'Administrador' : 'Monitor de Campo' }}
+          </span>
+          <span class="text-[9px] block text-[#666000] lowercase italic">
+            {{ authService.currentUser()?.email || 'Sesión iniciada' }}
+          </span>
         </div>
         <div class="w-9 h-9 bg-gray-100 rounded-full overflow-hidden border-2 border-white shadow-sm flex items-center justify-center text-sge-navy font-black text-xs">
-          <!-- 🔑 SOLUCIÓN TS2532: Validamos la inicial de forma segura -->
           {{ authService.currentUser()?.email?.charAt(0)?.toUpperCase() || '?' }}
         </div>
       </div>
-
     </header>
 
-    <!-- Zona de Renderizado de Páginas -->
     <div class="flex-1 overflow-y-auto p-10">
       <router-outlet></router-outlet>
     </div>
-
   </main>
 </div>
