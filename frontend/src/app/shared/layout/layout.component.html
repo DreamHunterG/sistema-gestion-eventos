@@ -1,66 +1,70 @@
-<div class="flex h-screen bg-[#F8FAFC] font-sans overflow-hidden">
-  <aside class="w-64 bg-white border-r flex flex-col justify-between p-6 shadow-sm z-20 shrink-0">
-    <div>
-      <div class="flex items-center gap-3 mb-10">
-        <div class="w-10 h-10 bg-sge-navy rounded-lg flex items-center justify-center text-white font-black italic shadow-md text-xl">S</div>
-        <div>
-          <h2 class="text-sge-navy font-bold text-sm m-0 leading-none">SGE</h2>
-          <p class="text-gray-400 text-[9px] uppercase tracking-widest font-black mt-1">Plataforma</p>
+  <div class="flex h-screen bg-[#F8FAFC] font-sans overflow-hidden">
+    <aside class="w-64 bg-white border-r flex flex-col justify-between p-6 shadow-sm z-20 shrink-0">
+      <div>
+        <div class="flex items-center gap-3 mb-10">
+          <div class="w-10 h-10 bg-sge-navy rounded-lg flex items-center justify-center text-white font-black italic shadow-md text-xl">S</div>
+          <div>
+            <h2 class="text-sge-navy font-bold text-sm m-0 leading-none">SGE</h2>
+            <p class="text-gray-400 text-[9px] uppercase tracking-widest font-black mt-1">Plataforma</p>
+          </div>
         </div>
+
+        <nav class="flex flex-col gap-1">
+          <a routerLink="/dashboard" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
+            <mat-icon class="scale-90">event</mat-icon> <span class="text-sm">Eventos</span>
+          </a>
+          <a routerLink="/importar" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
+            <mat-icon class="scale-90">cloud_upload</mat-icon> <span class="text-sm">Importar</span>
+          </a>
+
+          <!-- 🛡️ ZONA DE SEGURIDAD (Solo ADMIN) -->
+          @if (authService.currentUser()?.rol === 'ADMIN') {
+            <a routerLink="/usuarios" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
+              <mat-icon class="scale-90">groups</mat-icon> <span class="text-sm text-nowrap">Usuarios</span>
+            </a>
+            <a routerLink="/auditoria" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
+              <mat-icon class="scale-90">history_edu</mat-icon> <span class="text-sm">Auditoría</span>
+            </a>
+          }
+
+          <a routerLink="/asistencia" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
+            <mat-icon class="scale-90">how_to_reg</mat-icon> <span class="text-sm">Asistencia</span>
+          </a>
+          <a routerLink="/escanner" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
+            <mat-icon class="scale-90">qr_code_scanner</mat-icon> <span class="text-sm">Escáner</span>
+          </a>
+
+          <a routerLink="/verificar" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
+            <mat-icon class="scale-90">check</mat-icon> <span class="text-sm">Validar  Logro</span>
+          </a>
+        </nav>
       </div>
 
-      <nav class="flex flex-col gap-1">
-        <a routerLink="/dashboard" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">event</mat-icon> <span class="text-sm">Eventos</span>
-        </a>
-        <a routerLink="/importar" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">cloud_upload</mat-icon> <span class="text-sm">Importar</span>
-        </a>
+      <div>
+        <button (click)="solicitarRecompensa()"
+                class="w-full bg-[#0583F2] hover:bg-[#005CAD] text-white py-4 rounded-2xl font-black text-xs shadow-xl mb-8 transition-all active:scale-95 uppercase tracking-widest">
+          ✨ Solicitar Recompensa
+        </button>
+        <a (click)="logout()" class="flex items-center gap-3 p-3 rounded-xl text-gray-400 cursor-pointer hover:bg-red-50 hover:text-red-600 transition-all font-bold">
 
-        <!-- 🛡️ ZONA DE SEGURIDAD (Solo ADMIN) -->
-        @if (authService.currentUser()?.rol === 'ADMIN') {
-          <a routerLink="/usuarios" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
-            <mat-icon class="scale-90">groups</mat-icon> <span class="text-sm text-nowrap">Usuarios</span>
-          </a>
-          <a routerLink="/auditoria" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
-            <mat-icon class="scale-90">history_edu</mat-icon> <span class="text-sm">Auditoría</span>
-          </a>
-        }
-
-        <a routerLink="/asistencia" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">how_to_reg</mat-icon> <span class="text-sm">Asistencia</span>
+          <mat-icon class="scale-90">logout</mat-icon> <span class="text-sm">Cerrar Sesión</span>
         </a>
-        <a routerLink="/escanner" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">qr_code_scanner</mat-icon> <span class="text-sm">Escáner</span>
-        </a>
-
-        <a routerLink="/verificar" routerLinkActive="bg-blue-50 text-sge-primary shadow-sm" class="flex items-center gap-3 p-3 rounded-xl text-gray-500 font-bold no-underline transition-all hover:bg-gray-50">
-          <mat-icon class="scale-90">check</mat-icon> <span class="text-sm">Validar  Logro</span>
-        </a>
-      </nav>
-    </div>
-
-    <div>
-      <button class="w-full bg-sge-primary text-white py-3 rounded-xl font-bold text-xs shadow-lg mb-6 hover:brightness-110 transition-all uppercase">Solicitar Recompensa</button>
-      <a (click)="logout()" class="flex items-center gap-3 p-3 rounded-xl text-gray-400 cursor-pointer hover:bg-red-50 hover:text-red-600 transition-all font-bold">
-        <mat-icon class="scale-90">logout</mat-icon> <span class="text-sm">Cerrar Sesión</span>
-      </a>
-    </div>
-  </aside>
-
-  <main class="flex-1 flex flex-col overflow-hidden bg-[#F2F2F2]">
-    <header class="h-16 bg-white border-b flex items-center justify-between px-12 shrink-0">
-      <span class="text-sge-primary font-black uppercase text-[10px] tracking-[0.3em]">Sistema de Gestión de Eventos</span>
-      <div class="flex items-center gap-4">
-        <div class="text-right leading-tight">
-          <span class="text-[10px] block font-black text-slate-700 uppercase tracking-tighter">{{authService.currentUser()?.rol || 'Sesión'}}</span>
-          <span class="text-[9px] block text-slate-400 lowercase">{{authService.currentUser()?.email || 'admin@sge.com'}}</span>
-        </div>
-        <div class="w-10 h-10 bg-slate-100 rounded-2xl border-2 border-white shadow-sm flex items-center justify-center text-sge-navy font-black uppercase">
-          {{ (authService.currentUser()?.email || 'U').charAt(0) }}
-        </div>
       </div>
-    </header>
-    <div class="flex-1 overflow-y-auto p-12"><router-outlet></router-outlet></div>
-  </main>
-</div>
+    </aside>
+
+    <main class="flex-1 flex flex-col overflow-hidden bg-[#F2F2F2]">
+      <header class="h-16 bg-white border-b flex items-center justify-between px-12 shrink-0">
+        <span class="text-sge-primary font-black uppercase text-[10px] tracking-[0.3em]">Sistema de Gestión de Eventos</span>
+        <div class="flex items-center gap-4">
+          <div class="text-right leading-tight">
+            <span class="text-[10px] block font-black text-slate-700 uppercase tracking-tighter">{{authService.currentUser()?.rol || 'Sesión'}}</span>
+            <span class="text-[9px] block text-slate-400 lowercase">{{authService.currentUser()?.email || 'admin@sge.com'}}</span>
+          </div>
+          <div class="w-10 h-10 bg-slate-100 rounded-2xl border-2 border-white shadow-sm flex items-center justify-center text-sge-navy font-black uppercase">
+            {{ (authService.currentUser()?.email || 'U').charAt(0) }}
+          </div>
+        </div>
+      </header>
+      <div class="flex-1 overflow-y-auto p-12"><router-outlet></router-outlet></div>
+    </main>
+  </div>

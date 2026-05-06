@@ -8,3 +8,15 @@
   background-color: transparent !important;
   box-shadow: none !important;
 }
+
+:host {
+  display: block;
+  background: transparent;
+}
+
+// Esto es vital para quitar el fondo blanco que pone Angular Material por defecto
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
