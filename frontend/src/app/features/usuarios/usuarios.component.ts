@@ -18,71 +18,107 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 })
 export class UsuariosComponent implements OnInit {
   private usuarioService = inject(UsuarioService);
-  protected authService = inject(AuthService);
+  protected authService = inject(AuthService); // 🛡️ Inyectamos para auditoría de auto-eliminación
   private snackBar = inject(MatSnackBar);
 
+  // --- 📊 ESTADOS DE VISTA ---
   usuarios = signal<Usuario[]>([]);
-  viewMode = signal<'ACTIVO' | 'INACTIVO'>('ACTIVO');
+  viewMode = signal<'ACTIVO' | 'INACTIVO'>('ACTIVO'); // 🔄 Controla si vemos equipo vigente o histórico
   showFilters = signal(false);
   isFormVisible = signal(false);
   isEditing = signal(false);
+
+  // --- 🔍 FILTROS ---
   searchTerm = signal('');
   filterRol = signal('');
 
-  // 🔑 SOLUCIÓN AL ERROR TS2353: Usamos UsuarioRequest
+  // --- 📝 GESTIÓN DE FORMULARIO (Usa UsuarioRequest para permitir el password) ---
   currentUsuario: UsuarioRequest = this.initUsuario();
 
+  // --- 🧠 MOTOR DE FILTRADO DINÁMICO (Busca por Nombre y Email) ---
   filteredUsuarios = computed(() => {
     return this.usuarios().filter(u => {
+      // 1. Filtrar por pestaña activa (Activo/Inactivo)
       if (u.estado !== this.viewMode()) return false;
+
       const term = this.searchTerm().toLowerCase();
-      const matchText = u.email.toLowerCase().includes(term) || (u.nombre && u.nombre.toLowerCase().includes(term));
+      // 2. Filtrar por texto (Busca en ambos campos)
+      const matchText = u.email.toLowerCase().includes(term) ||
+        (u.nombre && u.nombre.toLowerCase().includes(term));
+
+      // 3. Filtrar por Rol seleccionado
       const matchRol = this.filterRol() ? u.rol === this.filterRol() : true;
+
       return matchText && matchRol;
     });
   });
 
-  displayedColumns: string[] = ['perfil', 'nombre', 'email', 'rol', 'actions'];
+  // 🔑 DEFINICIÓN DE COLUMNAS PARA LA TABLA
+  displayedColumns: string[] = ['perfil', 'nombre', 'email', 'rol', 'estado', 'actions'];
 
   ngOnInit() { this.cargarEquipo(); }
 
   cargarEquipo() {
     this.usuarioService.getUsuarios().subscribe({
       next: (data) => this.usuarios.set(data),
-      error: () => this.notificar('Falla al conectar con el servidor', 'error')
+      error: () => this.notificar('Falla al conectar con el servidor. Revisa el Backend.', 'error')
     });
   }
 
+  // --- 🎨 GESTIÓN DE COLORES DE FIGMA ---
+  getRoleColor(rol: string): string {
+    switch (rol) {
+      case 'ADMIN': return '#005CAD';    // sge-navy
+      case 'MONITOR': return '#F3E742';  // sge-achievement
+      case 'INVITADO': return '#1DB6F2'; // sge-sky
+      default: return '#94A3B8';         // gris
+    }
+  }
+
+  getTextColor(rol: string): string {
+    // Si el fondo es amarillo (Monitor), la letra es verde oscuro para contraste
+    return rol === 'MONITOR' ? '#666000' : '#FFFFFF';
+  }
+
+  // --- 🚀 ACCIONES DE NEGOCIO (CRUD) ---
+
+  // CUMPLIMIENTO HU-02: Archivado lógico y seguridad de cuenta propia
   onArchivar(u: Usuario) {
+    if (!u.id) return;
+
+    // 🛡️ REGLA DE ORO: No puedes desactivar tu propia cuenta en sesión
     if (u.email === this.authService.currentUser()?.email) {
-      this.notificar('Acción bloqueada: No puedes desactivar tu propia cuenta.', 'error');
+      this.notificar('Acción bloqueada: No puedes revocar tu propio acceso.', 'error');
       return;
     }
-    if (confirm(`¿Desea cambiar el estado de acceso de ${u.nombre}?`)) {
-      this.usuarioService.eliminarUsuario(u.id!).subscribe(() => {
-        this.notificar('Estado actualizado', 'success');
+
+    const accion = u.estado === 'ACTIVO' ? 'archivar' : 'restaurar';
+    if (confirm(`¿Desea ${accion} el acceso de ${u.nombre}?`)) {
+      this.usuarioService.eliminarUsuario(u.id).subscribe(() => {
+        this.notificar('Estado de acceso actualizado en red', 'success');
         this.cargarEquipo();
       });
     }
   }
 
   onSave() {
-    const req = this.isEditing()
+    const request = this.isEditing()
       ? this.usuarioService.actualizarUsuario(this.currentUsuario.id!, this.currentUsuario)
       : this.usuarioService.crearUsuario(this.currentUsuario);
 
-    req.subscribe({
+    request.subscribe({
       next: () => {
-        this.notificar('Registro actualizado con éxito', 'success');
+        this.notificar('Identidad confirmada y guardada', 'success');
         this.cargarEquipo();
         this.isFormVisible.set(false);
-      }
+      },
+      error: () => this.notificar('Error en el proceso. Revisa los datos.', 'error')
     });
   }
 
   onEdit(u: Usuario) {
     this.isEditing.set(true);
-    // Clonamos el objeto de la lista al objeto del formulario permitiendo el password
+    // Clonamos los datos al formulario. El password se deja vacío por seguridad.
     this.currentUsuario = { ...u, password: '' };
     this.isFormVisible.set(true);
     setTimeout(() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }), 100);
@@ -90,8 +126,10 @@ export class UsuariosComponent implements OnInit {
 
   toggleForm() {
     this.isFormVisible.update(v => !v);
-    this.isEditing.set(false);
-    this.currentUsuario = this.initUsuario();
+    if (!this.isFormVisible()) {
+      this.isEditing.set(false);
+      this.currentUsuario = this.initUsuario();
+    }
   }
 
   private initUsuario(): UsuarioRequest {
@@ -99,6 +137,9 @@ export class UsuariosComponent implements OnInit {
   }
 
   private notificar(msg: string, tipo: string) {
-    this.snackBar.open(msg, 'Cerrar', { duration: 3000, panelClass: tipo === 'success' ? ['bg-green-600'] : ['bg-red-600'] });
+    this.snackBar.open(msg, 'Cerrar', {
+      duration: 3000,
+      panelClass: tipo === 'success' ? ['bg-green-600'] : ['bg-red-600']
+    });
   }
 }

@@ -1,10 +1,9 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  // 1. Buscamos el token en la mochila del navegador
   const token = localStorage.getItem('sge_token');
 
-  // 2. Si hay token, se lo pegamos a la petición antes de que salga
+  // Si tenemos el token, lo pegamos en cada llamada al servidor
   if (token) {
     const cloned = req.clone({
       setHeaders: {
@@ -14,6 +13,5 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(cloned);
   }
 
-  // 3. Si no hay token, la petición sigue su curso normal
   return next(req);
 };

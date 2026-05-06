@@ -18,11 +18,6 @@ export class ParticipanteService {
     return this.http.put<Participante>(`${this.apiUrl}/checkin/${id}`, {});
   }
 
-  // 🔑 MÉTODO FALTANTE: Historial por Persona (HU-25)
-  getHistorial(email: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/historial/${email}`);
-  }
-
   validarHash(hash: string): Observable<any> {
     return this.http.get(`${this.publicUrl}/validar/${hash}`);
   }
@@ -33,7 +28,8 @@ export class ParticipanteService {
     return this.http.post<ImportResponse>(`${this.apiUrl}/importar/${eventoId}`, formData);
   }
 
-  descargarCertificado(id: number, nombreParticipante: string) {
+  // 🔑 MÉTODO CORREGIDO: Recibe ID y Nombre para el PDF
+  descargarCertificado(id: number, nombre: string) {
     const token = localStorage.getItem('sge_token');
     this.http.get(`${this.apiUrl}/download/${id}`, {
       responseType: 'blob',
@@ -43,11 +39,10 @@ export class ParticipanteService {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `Certificado_${nombreParticipante.replace(/\s+/g, '_')}.pdf`;
+        link.download = `Certificado_${nombre.replace(/\s+/g, '_')}.pdf`;
         link.click();
         window.URL.revokeObjectURL(url);
-      },
-      error: (err) => console.error('Error al descargar el PDF', err)
+      }
     });
   }
 }

@@ -166,3 +166,16 @@ body {
     box-shadow: none !important;
   }
 }
+
+
+// Añade esto al final de tu styles.scss
+.custom-modal-container .mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.blur-backdrop {
+  background: rgba(0, 28, 59, 0.4) !important;
+  backdrop-filter: blur(8px) !important;
+}
