@@ -39,18 +39,33 @@
         </div>
       </div>
 
-      <div class="lg:col-span-4 flex flex-col items-center justify-center border-l border-gray-100 pl-8">
-        <div class="relative w-36 h-32 flex items-center justify-center rounded-full border-[10px] border-slate-50 shadow-inner">
-          <svg class="absolute inset-0 w-full h-full -rotate-90">
-            <circle cx="64" cy="64" r="54" fill="transparent" stroke="#F3E742" stroke-width="10"
-                    [attr.stroke-dasharray]="339"
-                    [attr.stroke-dashoffset]="339 - (339 * calculatePercent() / 100)"></circle>
-          </svg>
-          <span class="text-3xl font-black text-sge-navy">{{calculatePercent()}}%</span>
-        </div>
-        <p class="text-[8px] font-black text-gray-300 uppercase mt-2 italic">Aforo Real</p>
+    <div class="lg:col-span-4 flex flex-col items-center justify-center border-l border-gray-100 pl-8">
+      <div class="relative w-40 h-40 flex items-center justify-center">
+        <svg class="w-full h-full -rotate-90" viewBox="0 0 128 128">
+          <!-- Círculo de fondo (Gris con más contraste) -->
+          <circle cx="64" cy="64" r="54"
+                  fill="transparent"
+                  stroke="#E2E8F0"
+                  stroke-width="12">
+          </circle>
+          <!-- Círculo de progreso (Amarillo) -->
+          <circle cx="64" cy="64" r="54"
+                  fill="transparent"
+                  stroke="#F3E742"
+                  stroke-width="12"
+                  stroke-linecap="round"
+                  style="transition: stroke-dashoffset 0.8s ease-in-out;"
+                  [attr.stroke-dasharray]="339.29"
+                  [attr.stroke-dashoffset]="339.29 - (339.29 * calculatePercent() / 100)">
+          </circle>
+        </svg>
+        <!-- Texto central -->
+        <span class="absolute text-4xl font-black text-sge-navy">{{calculatePercent()}}%</span>
       </div>
+      <!-- Etiqueta inferior con color #666000 y 12px -->
+      <p class="text-[12px] font-black text-[#666000] uppercase mt-4 italic tracking-widest">Aforo Real</p>
     </div>
+  </div>
 
     <!-- 3. TABLA DE ASISTENTES (Cabecera Sincronizada con Dashboard) -->
     <div class="bg-white rounded-[3.5rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-50 mb-12">
