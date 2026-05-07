@@ -10,12 +10,21 @@ export class ParticipanteService {
   private publicUrl = 'http://localhost:8080/api/public';
   private http = inject(HttpClient);
 
-  getParticipantes(): Observable<Participante[]> {
-    return this.http.get<Participante[]>(this.apiUrl);
+  getParticipantes(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
   }
 
-  registrarAsistencia(id: number): Observable<Participante> {
-    return this.http.put<Participante>(`${this.apiUrl}/checkin/${id}`, {});
+  registrarAsistencia(id: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/checkin/${id}`, {});
+  }
+
+  // 🔑 NUEVO: Método para el CRUD Manual (HU-09)
+  registrarManual(nombre: string, email: string, eventoId: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/manual`, {
+      nombreCompleto: nombre,
+      email: email,
+      eventoId: eventoId
+    });
   }
 
   validarHash(hash: string): Observable<any> {
@@ -28,7 +37,7 @@ export class ParticipanteService {
     return this.http.post<ImportResponse>(`${this.apiUrl}/importar/${eventoId}`, formData);
   }
 
-  // 🔑 MÉTODO CORREGIDO: Recibe ID y Nombre para el PDF
+  // 🔑 CORREGIDO: Recibe el nombre para nombrar el archivo descargado
   descargarCertificado(id: number, nombre: string) {
     const token = localStorage.getItem('sge_token');
     this.http.get(`${this.apiUrl}/download/${id}`, {

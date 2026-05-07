@@ -3,18 +3,18 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ParticipanteService } from '../../services/participante.service';
 import { EventoService } from '../../services/evento.service';
-import { Participante } from '../../models/participante.model';
 import { Evento } from '../../models/evento.model';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-asistencia',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatIconModule, MatTableModule, MatButtonModule, MatSnackBarModule, MatSelectModule],
+  imports: [CommonModule, FormsModule, MatIconModule, MatTableModule, MatButtonModule, MatSnackBarModule, MatSelectModule, MatFormFieldModule],
   templateUrl: './asistencia.component.html',
   styleUrl: './asistencia.component.scss'
 })
@@ -25,11 +25,14 @@ export class AsistenciaComponent implements OnInit {
 
   eventos = signal<Evento[]>([]);
   eventoSeleccionado = signal<number | null>(null);
-  participantes = signal<Participante[]>([]);
+  participantes = signal<any[]>([]);
+
+  showFilters = signal(false);
+  isFormVisible = signal(false);
+  isUploading = signal(false);
   searchTerm = signal('');
-  showFilters = signal(false); // 🔑 Ahora sí la usamos
-  currentPage = signal(1);
-  displayedColumns: string[] = ['nombre', 'email', 'estado', 'acciones'];
+
+  nuevoParticipante = { nombreCompleto: '', email: '' };
 
   asistentesCount = computed(() => this.participantes().filter(p => p.asistio).length);
 
@@ -39,28 +42,73 @@ export class AsistenciaComponent implements OnInit {
   }
 
   filteredParticipantes = computed(() => {
+    const term = this.searchTerm().toLowerCase();
     return this.participantes().filter(p =>
-      p.persona?.nombreCompleto.toLowerCase().includes(this.searchTerm().toLowerCase())
+      p.persona.nombreCompleto.toLowerCase().includes(term) ||
+      p.persona.email.toLowerCase().includes(term)
     );
   });
 
-  ngOnInit() { this.eventoService.getEventos().subscribe((data: Evento[]) => this.eventos.set(data)); }
+  displayedColumns: string[] = ['nombre', 'email', 'estado', 'acciones'];
+
+  ngOnInit() { this.cargarEventos(); }
+
+  cargarEventos() {
+    this.eventoService.getEventos().subscribe(data => this.eventos.set(data));
+  }
 
   onEventoChange(id: number) {
     this.eventoSeleccionado.set(id);
-    this.participanteService.getParticipantes().subscribe((data: Participante[]) => {
-      this.participantes.set(data.filter(p => p.evento?.id === id));
+    this.cargarLista();
+  }
+
+  cargarLista() {
+    this.participanteService.getParticipantes().subscribe({
+      next: (data: any[]) => {
+        this.participantes.set(data.filter(p => p.evento?.id === this.eventoSeleccionado()));
+      }
     });
   }
 
   checkin(id: number) {
-    this.participanteService.registrarAsistencia(id).subscribe(() => {
-      this.snackBar.open('¡Ingreso Validado!', 'Cerrar', { duration: 2000 });
-      this.onEventoChange(this.eventoSeleccionado()!);
+    this.participanteService.registrarAsistencia(id).subscribe({
+      next: () => {
+        this.notificar('¡Ingreso Validado!', 'success');
+        this.cargarLista();
+      }
+    });
+  }
+
+  onSaveManual() {
+    if (!this.nuevoParticipante.nombreCompleto || !this.nuevoParticipante.email) return;
+    this.isUploading.set(true);
+
+    this.participanteService.registrarManual(
+      this.nuevoParticipante.nombreCompleto,
+      this.nuevoParticipante.email,
+      this.eventoSeleccionado()!
+    ).subscribe({
+      next: () => {
+        this.notificar('Participante vinculado con éxito', 'success');
+        this.cargarLista();
+        this.isFormVisible.set(false);
+        this.nuevoParticipante = { nombreCompleto: '', email: '' };
+        this.isUploading.set(false);
+      },
+      error: () => {
+        this.notificar('Error en el registro', 'error');
+        this.isUploading.set(false);
+      }
     });
   }
 
   descargar(id: number, nombre: string) {
     this.participanteService.descargarCertificado(id, nombre);
+  }
+
+  toggleForm() { this.isFormVisible.update(v => !v); }
+
+  private notificar(msg: string, tipo: string) {
+    this.snackBar.open(msg, 'Cerrar', { duration: 3000, panelClass: tipo === 'success' ? ['bg-green-600'] : ['bg-red-600'] });
   }
 }
