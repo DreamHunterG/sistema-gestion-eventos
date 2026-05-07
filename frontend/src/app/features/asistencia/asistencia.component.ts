@@ -65,22 +65,28 @@ export class AsistenciaComponent implements OnInit {
   cargarLista() {
     this.participanteService.getParticipantes().subscribe({
       next: (data: any[]) => {
+        // ✅ CORRECCIÓN TS18048: Usamos ?. para evitar el error de undefined
         this.participantes.set(data.filter(p => p.evento?.id === this.eventoSeleccionado()));
       }
     });
   }
 
+  // ✅ CORRECCIÓN TS2554: Ahora pasamos 2 argumentos (ID y EventoID)
   checkin(id: number) {
-    this.participanteService.registrarAsistencia(id).subscribe({
+    const eventoId = this.eventoSeleccionado();
+    if (!eventoId) return;
+
+    this.participanteService.registrarAsistencia(id, eventoId).subscribe({
       next: () => {
         this.notificar('¡Ingreso Validado!', 'success');
         this.cargarLista();
-      }
+      },
+      error: () => this.notificar('Error al procesar el check-in', 'error')
     });
   }
 
   onSaveManual() {
-    if (!this.nuevoParticipante.nombreCompleto || !this.nuevoParticipante.email) return;
+    if (!this.nuevoParticipante.nombreCompleto || !this.nuevoParticipante.email || !this.eventoSeleccionado()) return;
     this.isUploading.set(true);
 
     this.participanteService.registrarManual(

@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Participante } from '../models/participante.model';
 import { ImportResponse } from '../models/import.model';
 
 @Injectable({ providedIn: 'root' })
@@ -14,11 +13,11 @@ export class ParticipanteService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
-  registrarAsistencia(id: number): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/checkin/${id}`, {});
+  // 🔑 MÉTODO ACTUALIZADO: Envía id y eventoId como parámetro de URL
+  registrarAsistencia(id: number, eventoId: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/checkin/${id}?eventoId=${eventoId}`, {});
   }
 
-  // 🔑 NUEVO: Método para el CRUD Manual (HU-09)
   registrarManual(nombre: string, email: string, eventoId: number): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/manual`, {
       nombreCompleto: nombre,
@@ -37,7 +36,6 @@ export class ParticipanteService {
     return this.http.post<ImportResponse>(`${this.apiUrl}/importar/${eventoId}`, formData);
   }
 
-  // 🔑 CORREGIDO: Recibe el nombre para nombrar el archivo descargado
   descargarCertificado(id: number, nombre: string) {
     const token = localStorage.getItem('sge_token');
     this.http.get(`${this.apiUrl}/download/${id}`, {
