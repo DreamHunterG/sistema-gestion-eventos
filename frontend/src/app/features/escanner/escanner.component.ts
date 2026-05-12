@@ -1,7 +1,7 @@
-import { Component, OnInit, inject, signal, computed, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-// 🔑 IMPORTACIONES ACTUALIZADAS PARA V3 (STANDALONE)
+// 🔑 IMPORTACIÓN CORREGIDA PARA V3 (STANDALONE)
 import {
   NgxScannerQrcodeComponent,
   ScannerQRCodeConfig,
@@ -21,7 +21,7 @@ LOAD_WASM().subscribe();
 @Component({
   selector: 'app-escanner',
   standalone: true,
-  // 🔑 SE AGREGA NgxScannerQrcodeComponent AQUÍ
+  // 🔑 SE AGREGA NgxScannerQrcodeComponent AQUÍ EN LUGAR DEL MODULE
   imports: [
     CommonModule,
     FormsModule,
@@ -40,6 +40,7 @@ export class EscannerComponent implements OnInit {
   private participanteService = inject(ParticipanteService);
   private snackBar = inject(MatSnackBar);
 
+  // --- ESTADOS ---
   eventos = signal<Evento[]>([]);
   eventoSeleccionado = signal<number | null>(null);
   participantes = signal<any[]>([]);
@@ -55,6 +56,7 @@ export class EscannerComponent implements OnInit {
     }
   };
 
+  // Motor de búsqueda manual
   filteredParticipantes = computed(() => {
     const term = this.searchTerm().toLowerCase();
     return this.participantes().filter(p =>
@@ -80,7 +82,7 @@ export class EscannerComponent implements OnInit {
     });
   }
 
-  // CUMPLIMIENTO HU-13: Evento de escaneo
+  // HU-13: Evento al detectar un código QR
   public onEvent(e: ScannerQRCodeResult[], action: any): void {
     if (e && e.length > 0 && e[0].value) {
       const id = e[0].value;
@@ -88,6 +90,7 @@ export class EscannerComponent implements OnInit {
     }
   }
 
+  // Lógica Unificada (QR + Manual)
   procesarIngreso(idInscripcion: any) {
     if (!this.eventoSeleccionado()) {
       this.notificar('⚠️ Selecciona primero el evento destino', 'error');
@@ -100,7 +103,7 @@ export class EscannerComponent implements OnInit {
         this.cargarLista();
         this.searchTerm.set('');
       },
-      error: () => this.notificar('❌ Error: Registro no válido o ya procesado', 'error')
+      error: () => this.notificar('❌ Código no válido o ya registrado', 'error')
     });
   }
 

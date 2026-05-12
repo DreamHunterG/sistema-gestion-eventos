@@ -7,10 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "eventos")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Evento {
 
@@ -24,31 +21,34 @@ public class Evento {
     @Column(name = "fecha_evento", nullable = false)
     private LocalDateTime fechaEvento;
 
+    @Column(name = "fecha_fin", nullable = false)
+    private LocalDateTime fechaFin;
+
     @Column(name = "aforo_maximo", nullable = false)
     private Integer aforoMaximo;
 
-    @Enumerated(EnumType.STRING) // 🔑 INDISPENSABLE
-    @Column(name = "tipo_evento", nullable = false, length = 50)
+    private Integer duracion;
+
+    @Enumerated(EnumType.STRING)
     private TipoEvento tipoEvento = TipoEvento.CAPACITACION;
 
-    @Enumerated(EnumType.STRING) // 🔑 INDISPENSABLE
-    @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
     private Modalidad modalidad = Modalidad.PRESENCIAL;
 
-    @Enumerated(EnumType.STRING) // 🔑 INDISPENSABLE
-    @Column(length = 20)
+    @Enumerated(EnumType.STRING)
     private EstadoEvento estado = EstadoEvento.ACTIVO;
 
     @Column(name = "creado_at", updatable = false)
     private LocalDateTime creadoAt;
 
-    @Transient // Para el conteo dinámico que pide Angular
-    private Integer totalAsistentes;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_creador")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Usuario creador;
+
+    // 🔑 CAMBIO VITAL: Este campo permite que el Dashboard muestre el progreso de aforo
+    @Transient
+    private Integer totalAsistentes;
 
     @PrePersist
     protected void onCreate() {

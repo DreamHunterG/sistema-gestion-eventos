@@ -67,7 +67,8 @@ export class UsuariosComponent implements OnInit {
 
   // --- 🎨 GESTIÓN DE COLORES DE FIGMA ---
   getRoleColor(rol: string): string {
-    switch (rol) {
+    const r = rol?.toUpperCase() || '';
+    switch (r) {
       case 'ADMIN': return '#005CAD';    // sge-navy
       case 'MONITOR': return '#F3E742';  // sge-achievement
       case 'INVITADO': return '#1DB6F2'; // sge-sky
