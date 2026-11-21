@@ -46,11 +46,18 @@ export class RecompensaComponent implements OnInit {
   }
 
   private lanzarCelebracion() {
+    // 🔊 Sonido de confeti. El navegador lo permite porque el modal se abre con un clic del usuario.
+    const audio = new Audio('sounds/confetti.wav');
+    audio.volume = 0.6;
+    audio.play().catch(() => console.warn('Audio bloqueado por el navegador'));
+
+    // 🎉 Confeti. zIndex 1100 para quedar por encima del modal de Angular Material (z-index 1000).
     confetti.default({
       particleCount: 150,
       spread: 70,
       origin: { y: 0.6 },
-      colors: ['#0583F2', '#F3E742', '#005CAD']
+      colors: ['#0583F2', '#F3E742', '#005CAD'],
+      zIndex: 1100
     });
   }
 
