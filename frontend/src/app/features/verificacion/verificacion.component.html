@@ -89,17 +89,21 @@
                 </tr>
                 </thead>
                 <tbody class="divide-y text-slate-700 bg-white">
-                  @for (item of resultados(); track item.id) {
+                  @for (item of resultados(); track item.codigo) {
                     <tr class="hover:bg-blue-50/40 transition-colors">
                       <td class="p-8">
-                        <p class="font-black m-0 text-base text-slate-800 uppercase">{{ item.evento?.nombre || item.evento }}</p>
-                        <p class="text-[12px] text-[#666000] font-bold uppercase tracking-wider mt-1">{{ item.evento?.tipoEvento || 'Oficial' }}</p>
+                        <p class="font-black m-0 text-base text-slate-800 uppercase">{{ item.evento }}</p>
+                        <p class="text-[12px] text-[#666000] font-bold uppercase tracking-wider mt-1">{{ item.tipo || 'Oficial' }}</p>
+                        <p class="text-[12px] text-slate-500 mt-1">
+                          {{ item.participante }}
+                          @if (item.fechaEvento) { · {{ item.fechaEvento | date:'dd/MM/yyyy' }} }
+                        </p>
                       </td>
                       <td class="p-8">
-                        <code class="text-[12px] text-slate-400 font-mono break-all">{{ item.certificadoHash || item.hash }}</code>
+                        <code class="text-[12px] text-slate-400 font-mono break-all">{{ item.codigo }}</code>
                       </td>
                       <td class="p-8 text-center">
-                        <button (click)="descargar(item.id)" class="bg-[#F3E742] text-[#666000] px-6 py-3 rounded-2xl font-black text-[12px] hover:bg-[#0583F2] hover:text-white transition-all shadow-md">
+                        <button (click)="descargar(item.codigo)" class="bg-[#F3E742] text-[#666000] px-6 py-3 rounded-2xl font-black text-[12px] hover:bg-[#0583F2] hover:text-white transition-all shadow-md">
                           DESCARGAR
                         </button>
                       </td>

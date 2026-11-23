@@ -10,6 +10,9 @@ import java.util.Optional;
 public interface InscripcionRepository extends JpaRepository<Inscripcion, Long> {
     List<Inscripcion> findByPersonaEmail(String email);
     Optional<Inscripcion> findByCertificadoHash(String hash);
+
+    // Portal público: solo certificados emitidos (con firma = la persona asistió)
+    List<Inscripcion> findByPersonaEmailIgnoreCaseAndCertificadoHashIsNotNull(String email);
     Optional<Inscripcion> findByIdAndEventoId(Long id, Long eventoId);
 
 

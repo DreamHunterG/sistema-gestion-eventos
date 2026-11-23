@@ -71,9 +71,10 @@ export class VerificacionComponent {
   }
 
   // HU-18: Descarga de documento inmutable
-  descargar(id: number) {
-    if (!id) return;
-    window.open(`http://localhost:8080/api/public/download/${id}`, '_blank');
+  // Se descarga por el código del certificado (no por un ID que se pueda adivinar)
+  descargar(codigo: string) {
+    if (!codigo) return;
+    window.open(`http://localhost:8080/api/public/download/${encodeURIComponent(codigo)}`, '_blank');
   }
 
   private ejecutarCelebracion() {
