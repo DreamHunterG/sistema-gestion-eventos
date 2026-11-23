@@ -1,105 +1,136 @@
 <div class="max-w-7xl mx-auto font-sans p-6 animate-in bg-[#F2F2F2] min-h-screen">
 
-  <!-- 0. SELECTOR DE EVENTO -->
-  <div class="bg-white p-8 rounded-[2.5rem] shadow-sm mb-8 flex items-center justify-between border-l-[12px] border-sge-primary">
-    <div class="flex flex-col">
+  <!-- SELECTOR DE EVENTO -->
+  <div
+    class="bg-white p-8 rounded-[2.5rem] shadow-sm mb-8 flex items-center justify-between border-l-[12px] border-sge-primary">
+    <div>
       <h2 class="text-xl font-black text-sge-navy m-0 uppercase italic tracking-tighter">Punto de Validación</h2>
-      <p class="text-[10px] text-gray-400 font-bold uppercase mt-1">Control operativo de ingresos por evento</p>
+      <p class="text-[10px] text-gray-400 font-bold uppercase mt-1">Selecciona el evento para iniciar el control</p>
     </div>
     <mat-form-field appearance="outline" class="w-96">
-      <mat-label>Seleccionar Torneo o Taller</mat-label>
+      <mat-label>Evento en Curso</mat-label>
       <mat-select (selectionChange)="onEventoChange($event.value)">
         @for (ev of eventos(); track ev.id) {
-          <mat-option [value]="ev.id">{{ev.nombre}}</mat-option>
+          <mat-option [value]="ev.id">{{ ev.nombre }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
   </div>
 
   @if (eventoSeleccionado()) {
-    <!-- 1. HEADER CON MÉTRICAS -->
-    <div class="bg-white p-10 rounded-[3.5rem] shadow-2xl mb-10 relative overflow-hidden border border-gray-50">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        <div class="lg:col-span-8">
-          <h1 class="text-4xl font-black text-slate-800 mb-2 uppercase italic tracking-tighter">Control de Asistencia</h1>
-          <p class="text-gray-400 font-medium mb-8 uppercase text-[10px] tracking-[0.3em]">Gestión de méritos en tiempo real.</p>
-
-          <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
-            <div class="bg-slate-50 p-6 rounded-[2rem] border-b-4 border-sge-primary shadow-sm">
-              <span class="block text-[9px] font-black text-slate-400 uppercase mb-2">Comunidad Inscrita</span>
-              <span class="text-3xl font-black text-sge-navy">{{participantes().length}}</span>
-            </div>
-            <div class="bg-blue-50 p-6 rounded-[2rem] border-b-4 border-green-400 shadow-sm">
-              <span class="block text-[9px] font-black text-green-600 uppercase mb-2">Asistentes Hoy</span>
-              <span class="text-3xl font-black text-sge-navy">{{asistentesCount()}}</span>
-            </div>
-            <div class="bg-yellow-50 p-6 rounded-[2rem] border-b-4 border-sge-achievement shadow-sm">
-              <span class="block text-[9px] font-black text-[#666000] uppercase mb-2">Por Certificar</span>
-              <span class="text-3xl font-black text-sge-navy">{{participantes().length - asistentesCount()}}</span>
-            </div>
+    <!-- HEADER + MÉTRICAS -->
+    <div
+      class="bg-white p-10 rounded-[3.5rem] shadow-2xl mb-10 border border-gray-50 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center animate-in">
+      <div class="lg:col-span-8">
+        <h1 class="text-4xl font-black text-slate-800 uppercase italic tracking-tighter mb-2">Control de Asistencia</h1>
+        <p class="text-gray-400 font-medium uppercase text-[10px] tracking-[0.3em] mb-8">Validación de méritos y aforo
+          en tiempo real</p>
+        <div class="grid grid-cols-3 gap-6">
+          <div class="bg-slate-50 p-6 rounded-[2rem] border-b-4 border-sge-primary flex flex-col">
+            <span class="text-[9px] font-black text-slate-400 uppercase mb-2">Inscritos</span>
+            <span class="text-3xl font-black text-sge-navy">{{ participantes().length }}</span>
+          </div>
+          <div class="bg-blue-50 p-6 rounded-[2rem] border-b-4 border-green-400 flex flex-col">
+            <span class="text-[9px] font-black text-green-600 uppercase mb-2">Asistentes</span>
+            <span class="text-3xl font-black text-sge-navy">{{ asistentesCount() }}</span>
+          </div>
+          <div class="bg-yellow-50 p-6 rounded-[2rem] border-b-4 border-sge-achievement flex flex-col">
+            <span class="text-[9px] font-black text-[#666000] uppercase mb-2">Pendientes</span>
+            <span class="text-3xl font-black text-sge-navy">{{ participantes().length - asistentesCount() }}</span>
           </div>
         </div>
-
-        <!-- 2. CÍRCULO DE PROGRESO -->
-        <div class="lg:col-span-4 flex flex-col items-center justify-center border-l border-gray-100 pl-8">
-          <div class="relative w-40 h-40 flex items-center justify-center rounded-full border-[15px] border-slate-50 shadow-inner">
-            <svg class="absolute inset-0 w-full h-full -rotate-90">
-              <circle cx="80" cy="80" r="70" fill="transparent" stroke="#F3E742" stroke-width="15"
-                      [attr.stroke-dasharray]="440"
-                      [attr.stroke-dashoffset]="440 - (440 * calculatePercent() / 100)"></circle>
-            </svg>
-            <div class="flex flex-col items-center">
-              <span class="text-4xl font-black text-sge-navy">{{calculatePercent()}}%</span>
-              <span class="text-[8px] font-black text-gray-300 uppercase italic">Aforo Actual</span>
-            </div>
-          </div>
+      </div>
+      <div class="lg:col-span-4 flex flex-col items-center justify-center border-l border-gray-100 pl-8">
+        <div
+          class="relative w-40 h-40 flex items-center justify-center rounded-full border-[15px] border-slate-50 shadow-inner">
+          <svg class="absolute inset-0 w-full h-full -rotate-90">
+            <circle cx="80" cy="80" r="70" fill="transparent" stroke="#E2E8F0" stroke-width="12"></circle>
+            <circle cx="80" cy="80" r="70" fill="transparent" stroke="#F3E742" stroke-width="15"
+                    stroke-linecap="round" style="transition: stroke-dashoffset 0.8s ease;"
+                    [attr.stroke-dasharray]="440"
+                    [attr.stroke-dashoffset]="440 - (440 * calculatePercent() / 100)"></circle>
+          </svg>
+          <span class="text-4xl font-black text-sge-navy">{{ calculatePercent() }}%</span>
         </div>
+        <p class="text-[12px] font-black text-[#666000] uppercase mt-4 italic tracking-widest">Aforo Real</p>
       </div>
     </div>
 
-    <!-- 3. TABLA CON CABECERA ORGANIZADA -->
-    <div class="bg-white rounded-[3.5rem] shadow-2xl overflow-hidden border border-slate-50 mb-12">
-
-      <div class="p-10 border-b bg-slate-50/20 flex justify-between items-center">
-        <div class="flex items-center gap-8">
-          <div class="flex items-center gap-4">
-            <div class="bg-[#005CAD] p-3 rounded-2xl shadow-inner text-white">
-              <mat-icon>assignment_ind</mat-icon>
-            </div>
-            <h2 class="text-xl font-bold text-slate-700 m-0 tracking-tight italic uppercase">Listado de Participantes</h2>
-          </div>
-        </div>
-
-        <span class="bg-[#F3E742] text-[#666000] px-8 py-2 rounded-xl text-[10px] font-black italic shadow-sm border border-yellow-200/50 uppercase">ACTUALIZADO EN TIEMPO REAL
-        </span>
+    <!-- ACCIÓN Y BÚSQUEDA -->
+    <div class="grid grid-cols-12 gap-6 mb-10 items-center">
+      <div class="col-span-9 bg-white p-5 rounded-[2rem] shadow-sm flex items-center gap-4 border border-gray-100">
+        <mat-icon class="text-slate-300 ml-4">person_search</mat-icon>
+        <input type="text" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
+               placeholder="Buscar por nombre o email..."
+               class="w-full outline-none font-bold text-slate-700 bg-transparent">
       </div>
+      <div class="col-span-3 flex gap-3">
+        <button
+          (click)="toggleForm()"
+          class="flex-1 bg-sge-primary text-white py-5 rounded-2xl font-black text-s shadow-lg hover:scale-105 transition-all flex items-center justify-center gap-2">
 
-      <!-- PANEL DE FILTROS DESPLEGABLE -->
-      @if (showFilters()) {
-        <div class="bg-slate-50/50 p-8 border-b animate-in">
-          <div class="bg-white p-2 rounded-2xl shadow-sm border flex items-center gap-4">
-            <mat-icon class="text-slate-300 ml-4">person_search</mat-icon>
-            <input type="text" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
-                   placeholder="Escribe nombre o email para buscar..."
-                   class="w-full p-4 outline-none font-bold text-slate-600 bg-transparent">
+          <mat-icon class="scale-85">
+            {{ isFormVisible() ? 'close' : 'person_add' }}
+          </mat-icon>
+
+          REGISTRO MANUAL
+        </button>
+      </div>
+    </div>
+
+    <!-- FORMULARIO BENTO -->
+    @if (isFormVisible()) {
+      <div class="bg-white p-10 rounded-[3rem] shadow-2xl border-b-[15px] border-sge-primary mb-10 animate-in">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="flex flex-col gap-2">
+            <label class="text-[9px] font-black text-gray-400 uppercase ml-2">Nombre Completo</label>
+            <input [(ngModel)]="nuevoParticipante.nombreCompleto"
+                   class="bg-slate-50 p-5 rounded-2xl outline-none font-bold text-slate-700">
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-[9px] font-black text-gray-400 uppercase ml-2">Email Institucional</label>
+            <input [(ngModel)]="nuevoParticipante.email"
+                   class="bg-slate-50 p-5 rounded-2xl outline-none font-bold text-slate-700">
           </div>
         </div>
-      }
+        <div class="flex justify-center mt-10">
+          <button (click)="onSaveManual()" [disabled]="isUploading()"
+                  class="bg-[#001C3B] text-white px-16 py-4 rounded-2xl font-black text-lg shadow-xl disabled:opacity-30">
+            VINCULAR AL EVENTO
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- TABLA DE CONTROL -->
+    <div class="bg-white rounded-[4rem] shadow-2xl overflow-hidden border border-gray-50">
+      <div class="p-10 border-b bg-slate-50/20 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+          <div class="bg-[#005CAD] p-3 rounded-2xl shadow-inner text-white flex items-center justify-center">
+            <mat-icon>how_to_reg</mat-icon>
+          </div>
+          <h2 class="text-xl font-bold text-slate-700 m-0 tracking-tight italic uppercase">Listado de Asistentes</h2>
+        </div>
+        <span
+          class="bg-[#F3E742] text-[#666000] px-8 py-2 rounded-xl text-[10px] font-black italic shadow-sm uppercase">Actualizado en tiempo real</span>
+      </div>
 
       <table mat-table [dataSource]="filteredParticipantes()" class="w-full">
         <ng-container matColumnDef="nombre">
-          <th mat-header-cell *matHeaderCellDef class="p-10 text-[10px] font-black text-slate-400 uppercase tracking-widest">Participante</th>
+          <th mat-header-cell *matHeaderCellDef
+              class="p-10 text-[10px] font-black text-slate-400 uppercase tracking-widest">Participante
+          </th>
           <td mat-cell *matCellDef="let p" class="p-8">
             <div class="flex items-center gap-5">
-              <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-300 border border-slate-100 shadow-inner">
-                <mat-icon class="scale-125">person</mat-icon>
+              <div
+                class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-300 border border-slate-100 shadow-inner">
+                <mat-icon>person</mat-icon>
               </div>
               <div class="flex flex-col leading-tight">
-                <span class="font-black text-slate-800 text-base">{{p.nombreCompleto}}</span>
-                @if(p.asistio) {
-                  <span class="text-[9px] font-black text-[#666000] flex items-center gap-1 mt-1">
-                    <mat-icon class="scale-50">stars</mat-icon> LOGRO VALIDADO
-                  </span>
+                <span class="font-black text-slate-800 text-base">{{ p.persona.nombreCompleto }}</span>
+                @if (p.asistio) {
+                  <span class="text-[9px] font-black text-[#666000] flex items-center gap-1 mt-1 uppercase"><mat-icon
+                    class="scale-50">stars</mat-icon> Logro Validado</span>
                 }
               </div>
             </div>
@@ -107,58 +138,66 @@
         </ng-container>
 
         <ng-container matColumnDef="email">
-          <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase">Identidad Digital</th>
-          <td mat-cell *matCellDef="let p" class="text-slate-400 font-medium italic">{{p.email}}</td>
+          <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase">Identidad
+            Digital
+          </th>
+          <td mat-cell *matCellDef="let p" class="text-slate-400 font-medium italic">{{ p.persona.email }}</td>
         </ng-container>
 
         <ng-container matColumnDef="estado">
-          <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase text-center">Estatus</th>
+          <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase text-center">
+            Estatus
+          </th>
           <td mat-cell *matCellDef="let p" class="text-center">
             <span [class]="p.asistio ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-400'"
-                  class="px-5 py-2 rounded-xl text-[9px] font-black uppercase shadow-sm inline-block">
-              {{ p.asistio ? 'ADENTRO' : 'ESPERANDO' }}
-            </span>
+                  class="px-5 py-2 rounded-xl text-[9px] font-black uppercase">{{ p.asistio ? 'ADENTRO' : 'ESPERANDO' }}</span>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="acciones">
-          <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase text-center pr-12">Acción</th>
+          <th mat-header-cell *matHeaderCellDef
+              class="text-[10px] font-black text-slate-400 uppercase text-center pr-12">Acción
+          </th>
           <td mat-cell *matCellDef="let p" class="text-center pr-12">
-            <div class="flex justify-center">
-              @if (!p.asistio) {
-                <button (click)="checkin(p.id)" class="bg-[#0583F2] text-white px-8 py-3 rounded-2xl font-black text-[10px] hover:bg-sge-navy shadow-lg shadow-blue-100 transition-all uppercase min-w-[140px]">
-                  Validar Ingreso
-                </button>
-              } @else {
-                <button (click)="descargar(p.id)" class="bg-sge-achievement text-[#666000] px-8 py-3 rounded-2xl font-black text-[10px] flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-md min-w-[140px]">
-                  <mat-icon class="scale-75">workspace_premium</mat-icon> DIPLOMA
-                </button>
-              }
-            </div>
+            @if (!p.asistio) {
+              <button (click)="checkin(p.id)"
+                      class="bg-[#0583F2] text-white px-8 py-3 rounded-2xl font-black text-[10px] hover:bg-sge-navy shadow-lg transition-all uppercase min-w-[140px]">
+                Validar Ingreso
+              </button>
+            } @else {
+              <button (click)="descargar(p.id, p.persona.nombreCompleto)"
+                      class="bg-sge-achievement text-[#666000] px-8 py-3 rounded-2xl font-black text-[10px] flex items-center justify-center gap-2 hover:scale-105 shadow-md min-w-[140px]">
+                <mat-icon class="scale-75">workspace_premium</mat-icon>
+                DIPLOMA
+              </button>
+            }
           </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-slate-50/50 h-24 transition-colors border-b border-slate-50"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+            class="hover:bg-slate-50/50 h-24 transition-colors border-b border-slate-50"></tr>
       </table>
 
-      <!-- 5. PIE DE PÁGINA (Conteo Dinámico Solicitado) -->
       <footer class="p-8 border-t flex justify-between items-center bg-white/50">
-        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest italic">
-            Mostrando {{filteredParticipantes().length}} participantes
-        </span>
+        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest italic text-center md:text-left">Mostrando {{ filteredParticipantes().length }}
+          asistentes registrados</span>
         <div class="flex items-center gap-4">
           <button class="pagination-btn">Anterior</button>
-          <span class="w-8 h-8 flex items-center justify-center bg-sge-navy text-white rounded-xl font-black text-xs shadow-lg">1</span>
+          <span
+            class="w-8 h-8 flex items-center justify-center bg-blue-100 text-[#005CAD] rounded-lg font-black text-xs shadow-sm">1</span>
           <button class="pagination-btn">Siguiente</button>
         </div>
+
       </footer>
     </div>
   } @else {
-    <div class="bg-white p-20 rounded-[4rem] shadow-xl text-center flex flex-col items-center justify-center border-2 border-dashed border-slate-200 animate-in">
+    <div
+      class="bg-white p-20 rounded-[4rem] shadow-xl text-center flex flex-col items-center justify-center border-2 border-dashed border-slate-200 animate-in mt-10">
       <mat-icon class="scale-[4] text-slate-100 mb-10">event_available</mat-icon>
       <h2 class="text-slate-400 font-black uppercase tracking-tighter text-2xl">Selección Requerida</h2>
-      <p class="text-slate-300 font-medium max-w-sm mt-2 italic">Elige un evento para iniciar el control de asistencia y méritos.</p>
+      <p class="text-slate-300 font-medium max-w-sm mt-2 italic">Elige un evento para iniciar el control de asistencia y
+        méritos.</p>
     </div>
   }
 </div>

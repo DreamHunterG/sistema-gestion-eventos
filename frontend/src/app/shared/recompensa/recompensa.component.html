@@ -1,19 +1,23 @@
-<div class="card-content p-1 {{config().bg}} rounded-[3.5rem] overflow-hidden shadow-2xl relative border-4 border-white/10 max-w-lg mx-auto">
+<div class="card-content animate-in p-1 {{config().bg}} rounded-[3.5rem] overflow-hidden shadow-2xl relative border-4 border-white/10 max-w-lg mx-auto">
 
-  <!-- Efectos de Luces -->
+  <!-- Efectos de Luces de fondo -->
   <div class="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
   <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-black/30 rounded-full blur-2xl"></div>
 
   <div class="p-12 text-center flex flex-col items-center relative z-10">
-
-    <div class="bg-white/10 w-24 h-24 rounded-[2rem] flex items-center justify-center mb-10 shadow-inner rotate-6 border border-white/5">
-      <mat-icon class="{{config().accent}} scale-[3]">{{config().icon}}</mat-icon>
+    <!-- Icono Animado: el envoltorio flota y la caja interna conserva su inclinación -->
+    <div class="floating-animation mb-10">
+      <div class="bg-white/10 w-24 h-24 rounded-[2rem] flex items-center justify-center shadow-inner rotate-6 border border-white/5">
+        <mat-icon class="{{config().accent}} scale-[3]">{{config().icon}}</mat-icon>
+      </div>
     </div>
 
-    <h3 class="{{config().accent}} font-black text-[10px] uppercase tracking-[0.5em] mb-8 italic">Misión Cumplida</h3>
+    <h3 class="{{config().accent}} font-black text-[10px] uppercase tracking-[0.5em] mb-8 italic">
+      Misión Cumplida
+    </h3>
 
     <div class="px-2">
-      <p class="{{config().text}} text-2xl font-bold leading-snug italic tracking-tight mb-12">
+      <p class="text-white text-2xl font-bold leading-snug italic tracking-tight mb-12">
         "{{frase()}}"
       </p>
     </div>
@@ -26,9 +30,8 @@
 
       <div class="flex items-center justify-center gap-2 opacity-30">
         <mat-icon class="text-white scale-75">verified</mat-icon>
-        <p class="text-white text-[12px] font-medium uppercase tracking-widest m-0 leading-none">Insignia destacada SGE</p>
+        <p class="text-white text-[12px] font-medium uppercase tracking-widest m-0">Insignia destacada SGE</p>
       </div>
     </div>
-
   </div>
 </div>

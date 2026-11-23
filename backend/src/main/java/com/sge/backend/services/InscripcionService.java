@@ -1,145 +1,111 @@
 package com.sge.backend.services;
 
-import com.sge.backend.entities.Evento;
-import com.sge.backend.repositories.EventoRepository;
 import com.sge.backend.dtos.ImportResponse;
+import com.sge.backend.entities.Auditoria;
+import com.sge.backend.entities.Evento;
+import com.sge.backend.entities.Inscripcion;
+import com.sge.backend.entities.Persona;
+import com.sge.backend.repositories.AuditoriaRepository;
+import com.sge.backend.repositories.EventoRepository;
+import com.sge.backend.repositories.InscripcionRepository;
+import com.sge.backend.repositories.PersonaRepository;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Importante para la integridad de datos
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Lógica de negocio centralizada para la gestión de participantes.
- * Implementa: Registro manual, Carga masiva (CSV), Check-in criptográfico y Auditoría.
- * Cumple con HU-09, 10, 11, 13, 14, 17, 18 y 24.
- */
 @Service
-public class ParticipanteService {
+@RequiredArgsConstructor
+public class InscripcionService {
 
-    @Autowired
-    private ParticipanteRepository participanteRepository;
+    private final InscripcionRepository inscripcionRepository;
+    private final PersonaRepository personaRepository;
+    private final EventoRepository eventoRepository;
+    private final CryptoService cryptoService;
+    private final AuditoriaRepository auditoriaRepository;
 
-    @Autowired
-    private EventoRepository eventoRepository;
-
-    @Autowired
-    private CryptoService cryptoService; // Motor de firma digital (HU-17)
-
-    // ==========================================================
-    // 1. REGISTRO INDIVIDUAL (HU-09 y HU-24)
-    // ==========================================================
     @Transactional
-    public Participante inscribirParticipante(Participante participante) {
-        // Validación de integridad: un email no puede estar dos veces en el mismo evento
-        boolean yaExiste = participanteRepository.existsByEmailAndEventoId(
-                participante.getEmail(),
-                participante.getEvento().getId()
-        );
+    public Inscripcion registroManual(String nombre, String email, Long eventoId) {
+        String responsable = SecurityContextHolder.getContext().getAuthentication().getName();
+        Persona persona = personaRepository.findByEmail(email)
+                .orElseGet(() -> personaRepository.save(new Persona(null, nombre, email)));
 
-        if (yaExiste) {
-            throw new RuntimeException("Error: El correo " + participante.getEmail() + " ya está inscrito en este evento.");
+        if (inscripcionRepository.existsByPersonaIdAndEventoId(persona.getId(), eventoId)) {
+            throw new RuntimeException("Este participante ya se encuentra registrado en el evento.");
         }
 
-        return participanteRepository.save(participante);
+        Inscripcion nueva = new Inscripcion();
+        nueva.setPersona(persona);
+        nueva.setEvento(eventoRepository.findById(eventoId).orElseThrow());
+        nueva.setAsistio(false);
+
+        auditoriaRepository.save(new Auditoria(responsable, "INSERT", "INSCRIPCION", "Registro manual de: " + nombre));
+        return inscripcionRepository.save(nueva);
     }
 
-    // ==========================================================
-    // 2. CHECK-IN Y FIRMA DIGITAL (HU-13, 14 y 17)
-    // ==========================================================
-    @Transactional
-    public Participante registrarAsistencia(Long id) {
-        return participanteRepository.findById(id).map(participante -> {
-            // Regla de negocio: Si ya asistió, no regeneramos el hash para mantener integridad
-            if (Boolean.TRUE.equals(participante.getAsistio())) {
-                return participante;
-            }
-
-            // Marcamos la asistencia (HU-13/14)
-            participante.setAsistio(true);
-
-            // Generamos la firma inmutable SHA-256 (HU-17)
-            // Usamos Email + ID del Evento para asegurar que el hash sea único por inscripción
-            String hashUnico = cryptoService.generarFirmaDigital(
-                    participante.getEmail(),
-                    participante.getEvento().getId()
-            );
-            participante.setCertificadoHash(hashUnico);
-
-            return participanteRepository.save(participante);
-        }).orElseThrow(() -> new RuntimeException("Participante no encontrado con ID: " + id));
-    }
-
-    // ==========================================================
-    // 3. CARGA MASIVA DE COMUNIDADES (HU-10 y HU-11)
-    // ==========================================================
+    // ✅ AÑADIDO: Método para importar CSV que el Controller necesita
     @Transactional
     public ImportResponse importarCSV(MultipartFile archivo, Long eventoId) {
-        int exitosos = 0;
-        int fallidos = 0;
-        List<String> detalleErrores = new ArrayList<>();
+        int exitosos = 0; int fallidos = 0;
+        List<String> errores = new ArrayList<>();
+        Evento evento = eventoRepository.findById(eventoId).orElseThrow();
 
-        // Validación de existencia del evento contenedor
-        Evento evento = eventoRepository.findById(eventoId)
-                .orElseThrow(() -> new RuntimeException("El evento destino no existe."));
-
-        try (CSVReader reader = new CSVReaderBuilder(new InputStreamReader(archivo.getInputStream()))
-                .withSkipLines(1) // Ignoramos los encabezados del archivo
-                .build()) {
-
+        try (CSVReader reader = new CSVReaderBuilder(new InputStreamReader(archivo.getInputStream())).withSkipLines(1).build()) {
             String[] fila;
             while ((fila = reader.readNext()) != null) {
                 try {
-                    // Validación de línea vacía para evitar errores de índice
-                    if (fila.length < 2 || fila[0].trim().isEmpty()) continue;
-
-                    String nombre = fila[0];
-                    String email = fila[1];
-
-                    // Aplicamos validación de duplicados (HU-24)
-                    if (participanteRepository.existsByEmailAndEventoId(email, eventoId)) {
-                        fallidos++;
-                        detalleErrores.add("Fila con email [" + email + "] omitida: Ya está registrado.");
-                        continue;
-                    }
-
-                    Participante nuevo = new Participante();
-                    nuevo.setNombreCompleto(nombre);
-                    nuevo.setEmail(email);
-                    nuevo.setEvento(evento);
-                    nuevo.setAsistio(false);
-
-                    participanteRepository.save(nuevo);
+                    String nombre = fila[0]; String email = fila[1];
+                    Persona p = personaRepository.findByEmail(email).orElseGet(() -> personaRepository.save(new Persona(null, nombre, email)));
+                    Inscripcion ins = new Inscripcion();
+                    ins.setPersona(p); ins.setEvento(evento); ins.setAsistio(false);
+                    inscripcionRepository.save(ins);
                     exitosos++;
-
-                } catch (Exception e) {
-                    fallidos++;
-                    detalleErrores.add("Error procesando registro: " + e.getMessage());
-                }
+                } catch (Exception e) { fallidos++; errores.add(e.getMessage()); }
             }
-        } catch (Exception e) {
-            throw new RuntimeException("Falla crítica al leer el archivo CSV", e);
+        } catch (Exception e) { throw new RuntimeException(e); }
+        return new ImportResponse(exitosos, fallidos, errores);
+    }
+
+    @Transactional
+    public Inscripcion registrarAsistencia(Long id, Long eventoId) {
+        // 1. Buscamos la inscripción que coincida con el ID y el Evento (Seguridad)
+        Inscripcion ins = inscripcionRepository.findByIdAndEventoId(id, eventoId)
+                .orElseThrow(() -> new RuntimeException("Código no válido para este evento"));
+
+        // 2. Si ya asistió, no hacemos nada (Integridad)
+        if (Boolean.TRUE.equals(ins.getAsistio())) {
+            return ins;
         }
 
-        return new ImportResponse(exitosos, fallidos, detalleErrores);
+        // 3. MARCAMOS ASISTENCIA REAL
+        ins.setAsistio(true);
+        ins.setFechaAsistencia(java.time.LocalDateTime.now()); // 🔑 ANOTAMOS LA HORA
+
+        // 4. GENERAMOS FIRMA DIGITAL
+        String hash = cryptoService.generarFirmaDigital(ins.getPersona().getEmail(), eventoId);
+        ins.setCertificadoHash(hash);
+
+        return inscripcionRepository.save(ins);
     }
 
-    // ==========================================================
-    // 4. CONSULTAS (HU-12, 18, 19)
-    // ==========================================================
-
-    // Listado completo de la tabla
-    public List<Participante> listarInscritos() {
-        return participanteRepository.findAll();
+    // ✅ AÑADIDO: Método de búsqueda que el Controller necesita para el PDF
+    public Inscripcion buscarInscripcionPorId(Long id) {
+        return inscripcionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Inscripción no encontrada"));
     }
 
-    // Búsqueda específica por ID (Necesaria para descargar el PDF)
-    public Participante buscarParticipantePorId(Long id) {
-        return participanteRepository.findById(id).orElse(null);
+    public List<Inscripcion> obtenerHistorial(String email) {
+        return inscripcionRepository.findByPersonaEmail(email);
+    }
+
+    public List<Inscripcion> listarTodas() {
+        return inscripcionRepository.findAll();
     }
 }

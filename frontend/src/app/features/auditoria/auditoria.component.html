@@ -1,0 +1,84 @@
+<div class="max-w-7xl mx-auto font-sans p-6 animate-in bg-[#F2F2F2] min-h-screen">
+
+  <header class="max-w-7xl mx-auto mb-12 flex justify-between items-end">
+    <div>
+      <h1 class="text-[42px] font-black text-slate-800 tracking-tight mb-2 uppercase italic">Control de Auditoría</h1>
+      <p class="text-gray-500 font-medium text-lg italic">Trazabilidad operativa y transparencia del sistema (ROOM_911).</p>
+    </div>
+  </header>
+
+  <!-- KPI CARDS -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+    <div class="bg-white p-8 rounded-[2.5rem] border-l-8 border-[#005CAD] shadow-sm">
+      <p class="text-[10px] font-bold text-[#005CAD] uppercase tracking-[0.2em] mb-2">Registros en Bitácora</p>
+      <div class="flex items-center gap-3">
+        <span class="text-5xl font-black text-slate-800 tracking-tighter">{{logs().length}}</span>
+        <span class="text-xs font-bold text-blue-500 bg-blue-50 px-3 py-1 rounded-lg italic">Actividades</span>
+      </div>
+    </div>
+    <div class="bg-[#FBF8D1] p-8 rounded-[2.5rem] border-l-8 border-[#F3E742] shadow-sm flex items-center gap-6">
+      <mat-icon class="scale-[1.5]" style="color: #666000;">gavel</mat-icon>
+      <p class="text-sm font-bold m-0 italic" style="color: #666000;">Aquí encontrarás una trazabilidad completa de las actividades del sistema en un solo lugar.</p>
+    </div>
+  </div>
+
+  <!-- TABLA DE RASTRO -->
+  <div class="bg-white rounded-[3.5rem] shadow-2xl shadow-slate-200/50 overflow-hidden border border-slate-50 mb-12">
+
+    <div class="p-10 border-b bg-slate-50/20 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <div class="bg-[#005CAD] p-3 rounded-2xl shadow-inner text-white"><mat-icon>history</mat-icon></div>
+        <h2 class="text-xl font-bold text-slate-700 m-0 tracking-tight uppercase italic">Rastro Operativo</h2>
+      </div>
+      <input type="text" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
+             placeholder="Buscar en bitácora..."
+             class="bg-white border p-3 rounded-xl text-xs font-bold w-64 outline-none focus:ring-2 ring-blue-100">
+    </div>
+
+    <table mat-table [dataSource]="filteredLogs()" class="w-full">
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef class="p-8 text-[10px] font-black text-slate-400 uppercase">Fecha/Hora</th>
+        <td mat-cell *matCellDef="let log" class="p-6 text-xs font-bold text-slate-500">{{log.fecha | date:'dd/MM/yy HH:mm:ss'}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="usuario">
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase">Actor</th>
+        <td mat-cell *matCellDef="let log" class="font-black text-[#0583F2]">{{log.usuarioEmail || 'SISTEMA'}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="accion">
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase text-center">Acción</th>
+        <td mat-cell *matCellDef="let log" class="text-center">
+          <span class="px-3 py-1 bg-blue-100 text-[#005CAD] rounded-lg text-[9px] font-black uppercase">{{log.accion}}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="entidad">
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase text-center">Entidad</th>
+        <td mat-cell *matCellDef="let log" class="text-center">
+          <span class="text-[10px] font-bold text-slate-300 italic">{{log.entidad}}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="detalle">
+        <th mat-header-cell *matHeaderCellDef class="text-[10px] font-black text-slate-400 uppercase pr-12 text-right">Descripción</th>
+        <td mat-cell *matCellDef="let log" class="text-[11px] text-slate-600 font-medium pr-12 italic text-right">{{log.detalle}}</td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-slate-50/50 transition-all border-b border-slate-50 h-16"></tr>
+    </table>
+
+    <footer class="p-8 border-t flex justify-between items-center bg-white/50">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-widest italic">
+          Mostrando {{filteredLogs().length}} de {{logs().length}} rastros operativos
+      </span>
+      <div class="flex items-center gap-4">
+        <button class="pagination-btn">Anterior</button>
+        <span class="w-8 h-8 flex items-center justify-center bg-blue-100 text-[#005CAD] rounded-lg font-black text-xs shadow-sm">1</span>
+        <button class="pagination-btn">Siguiente</button>
+      </div>
+
+    </footer>
+  </div>
+</div>

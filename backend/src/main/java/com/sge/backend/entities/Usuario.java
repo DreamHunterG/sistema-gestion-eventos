@@ -2,10 +2,12 @@ package com.sge.backend.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Entidad Usuario - Representa a los usuarios del sistema con roles específicos.
- * Roles finales: ADMIN (Gestión y Carga), MONITOR (Campo y QR), PARTICIPANTE (Descarga).
+ * Entidad Usuario - Versión Final Normalizada (Muchos a Muchos).
+ * Solución al error de mapeo de tablas intermedias.
  */
 @Entity
 @Table(name = "usuarios")
@@ -13,30 +15,39 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false, length = 100)
+    private String nombre;
     private String email;
-
-    @Column(nullable = false, length = 255)
+    private String rol;
     private String password;
+    private String estado = "ACTIVO";
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 20)
-    private Rol rol;
+    // 🔑 RELACIÓN MUCHOS A MUCHOS (Corregida)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "usuarios_roles",
+            joinColumns = @JoinColumn(name = "id_usuario"),
+            inverseJoinColumns = @JoinColumn(name = "id_rol") // 👈 CORREGIDO: 'joinColumns' en lugar de 'highlight'
+    )
+    private Set<Role> roles = new HashSet<>();
 
-    /**
-     * Definición de Roles más sencilla para el MVP -> cumplir el reto .
-     * NOTA PARA EL FUTURO: Si lo lelgase a esclar, se podría implementar una tabla de roles y permisos más compleja, pero para el alcance actual, esta enum es suficiente.
-     */
-    public enum Rol {
-        ADMIN,       // Puede crear eventos y subir listas CSV
-        MONITOR,     // Solo puede escanear QRs en la puerta
-        PARTICIPANTE // Solo puede ver y descargar su certificado
+    // 🔑 MÉTODO PUENTE: Soluciona el error "Cannot resolve method getRol"
+    // Este método permite que el resto del código siga funcionando en singular
+    public String getRol() {
+        // 1. Si la lista de roles de la DB tiene algo, devolvemos eso
+        if (this.roles != null && !this.roles.isEmpty()) {
+            return this.roles.iterator().next().getNombreRol();
+        }
+        // 2. Si la lista está vacía pero el campo 'rol' tiene texto (viene del front), devolvemos ese texto
+        if (this.rol != null) {
+            return this.rol;
+        }
+        // 3. Solo si no hay nada de nada, devolvemos el valor por defecto
+        return "INVITADO";
     }
 }

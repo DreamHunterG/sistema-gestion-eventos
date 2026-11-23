@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Participante } from '../models/participante.model';
 import { ImportResponse } from '../models/import.model';
 
 @Injectable({ providedIn: 'root' })
@@ -10,47 +9,47 @@ export class ParticipanteService {
   private publicUrl = 'http://localhost:8080/api/public';
   private http = inject(HttpClient);
 
-  // HU-12: Listar todos
-  getParticipantes(): Observable<Participante[]> {
-    return this.http.get<Participante[]>(this.apiUrl);
+  getParticipantes(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
   }
 
-  // HU-13/14: Check-in (QR o Manual)
-  registrarAsistencia(id: number): Observable<Participante> {
-    return this.http.put<Participante>(`${this.apiUrl}/checkin/${id}`, {});
+  // 🔑 MÉTODO ACTUALIZADO: Envía id y eventoId como parámetro de URL
+  registrarAsistencia(id: number, eventoId: number): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/checkin/${id}?eventoId=${eventoId}`, {});
   }
 
-  // HU-19: Validación Pública (Sin Token)
+  registrarManual(nombre: string, email: string, eventoId: number): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/manual`, {
+      nombreCompleto: nombre,
+      email: email,
+      eventoId: eventoId
+    });
+  }
+
   validarHash(hash: string): Observable<any> {
     return this.http.get(`${this.publicUrl}/validar/${hash}`);
   }
 
-  // HU-10: Carga Masiva
   importarCSV(file: File, eventoId: number): Observable<ImportResponse> {
     const formData = new FormData();
     formData.append('file', file);
     return this.http.post<ImportResponse>(`${this.apiUrl}/importar/${eventoId}`, formData);
   }
 
-  // HU-18: Descarga PDF
-  descargarCertificado(id: number, nombreParticipante: string) {
+  descargarCertificado(id: number, nombre: string) {
     const token = localStorage.getItem('sge_token');
-
-    // Llamamos al endpoint del backend
-    this.http.get(`http://localhost:8080/api/participantes/download/${id}`, {
-      responseType: 'blob', // 🔑 CRÍTICO: Le decimos a Angular que viene un archivo, no un texto
+    this.http.get(`${this.apiUrl}/download/${id}`, {
+      responseType: 'blob',
       headers: { 'Authorization': `Bearer ${token}` }
     }).subscribe({
       next: (blob) => {
-        // Creamos un link invisible para descargar el archivo
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `Certificado_${nombreParticipante.replace(/\s+/g, '_')}.pdf`;
+        link.download = `Certificado_${nombre.replace(/\s+/g, '_')}.pdf`;
         link.click();
         window.URL.revokeObjectURL(url);
-      },
-      error: (err) => console.error('Error al descargar el PDF', err)
+      }
     });
   }
 }

@@ -2,7 +2,7 @@ package com.sge.backend.services;
 
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfWriter;
-import com.sge.backend.entities.Participante;
+import com.sge.backend.entities.Inscripcion; // 🔑 CAMBIO: Ahora usamos Inscripción
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayOutputStream;
@@ -10,62 +10,72 @@ import java.io.ByteArrayOutputStream;
 @Service
 public class PDFService {
 
-    @Transactional(readOnly = true) // Evita errores al leer el nombre del evento
-    public byte[] generarCertificado(Participante p) {
+    @Transactional(readOnly = true)
+    public byte[] generarCertificado(Inscripcion ins) { // 🔑 CAMBIO: Recibe Inscripcion
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        Document document = new Document(PageSize.A4.rotate()); // Formato Diploma
+
+        // Configuración de márgenes para dar "aire" al diseño (Figma Style)
+        Document document = new Document(PageSize.A4.rotate(), 50, 50, 80, 30);
 
         try {
             PdfWriter.getInstance(document, out);
             document.open();
 
-            // Fuentes profesionales
-            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 36);
-            Font subTitleFont = FontFactory.getFont(FontFactory.HELVETICA, 20);
-            Font hashFont = FontFactory.getFont(FontFactory.COURIER, 10);
+            // Configuración de fuentes profesionales
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 40);
+            Font subTitleFont = FontFactory.getFont(FontFactory.HELVETICA, 18);
+            Font nameFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 42);
+            Font eventFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 26);
+            Font hashFont = FontFactory.getFont(FontFactory.COURIER, 9);
 
-            // Título
-            Paragraph title = new Paragraph("CERTIFICADO DE EXCELENCIA", titleFont);
+            // 1. TÍTULO PRINCIPAL
+            Paragraph title = new Paragraph("CONSTANCIA DE ASISTENCIA", titleFont);
             title.setAlignment(Element.ALIGN_CENTER);
-            title.setSpacingBefore(50);
+            title.setSpacingBefore(20);
             document.add(title);
 
             document.add(new Paragraph("\n\n"));
 
-            // Cuerpo del texto
+            // 2. TEXTO DE CONCESIÓN
             Paragraph body = new Paragraph("Se otorga el presente reconocimiento a:", subTitleFont);
             body.setAlignment(Element.ALIGN_CENTER);
             document.add(body);
 
-            // Nombre del Participante
-            Paragraph name = new Paragraph(p.getNombreCompleto(), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 40));
+            // 3. NOMBRE DEL TITULAR (🔑 CAMBIO: Se obtiene desde la entidad Persona)
+            // Ya no es ins.getNombreCompleto(), sino ins.getPersona().getNombreCompleto()
+            Paragraph name = new Paragraph(ins.getPersona().getNombreCompleto(), nameFont);
             name.setAlignment(Element.ALIGN_CENTER);
-            name.setSpacingBefore(20);
+            name.setSpacingBefore(30);
+            name.setSpacingAfter(30);
             document.add(name);
 
-            document.add(new Paragraph("\n"));
-
-            // Detalle del Evento
-            Paragraph detail = new Paragraph("Por su destacada participación en el evento/torneo:", subTitleFont);
+            // 4. DETALLE DEL LOGRO
+            Paragraph detail = new Paragraph("Por su destacada participación y cumplimiento de objetivos en:", subTitleFont);
             detail.setAlignment(Element.ALIGN_CENTER);
             document.add(detail);
 
-            Paragraph eventName = new Paragraph(p.getEvento().getNombre(), FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24));
+            // 5. NOMBRE DEL EVENTO / TORNEO (Obtenido desde la relación)
+            Paragraph eventName = new Paragraph("“" + ins.getEvento().getNombre() + "”", eventFont);
             eventName.setAlignment(Element.ALIGN_CENTER);
+            eventName.setSpacingBefore(15);
             document.add(eventName);
 
-            // Firma Digital (HU-17)
-            Paragraph hashLabel = new Paragraph("\n\n\n\nFirma Digital de Autenticidad (SHA-256):", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10));
+            // 6. PIE DE PÁGINA: FIRMA DIGITAL (HU-17)
+            Paragraph footerSpace = new Paragraph("\n\n\n\n\n");
+            document.add(footerSpace);
+
+            Paragraph hashLabel = new Paragraph("Firma Digital de Autenticidad SHA-256:", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9));
             hashLabel.setAlignment(Element.ALIGN_CENTER);
             document.add(hashLabel);
 
-            Paragraph hashValue = new Paragraph(p.getCertificadoHash(), hashFont);
+            // El Hash sigue viviendo directamente en la tabla de inscripciones
+            Paragraph hashValue = new Paragraph(ins.getCertificadoHash(), hashFont);
             hashValue.setAlignment(Element.ALIGN_CENTER);
             document.add(hashValue);
 
             document.close();
         } catch (Exception e) {
-            throw new RuntimeException("Error creando el PDF", e);
+            throw new RuntimeException("Error crítico en la generación del PDF", e);
         }
         return out.toByteArray();
     }

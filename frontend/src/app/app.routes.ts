@@ -39,6 +39,13 @@ export const routes: Routes = [
         loadComponent: () => import('./features/usuarios/usuarios.component').then(m => m.UsuariosComponent),
         title: 'SGE - Gestión de Equipo'
       },
+
+      {
+        path: 'auditoria',
+        loadComponent: () => import('./features/auditoria/auditoria.component').then(m => m.AuditoriaComponent),
+        title: 'SGE - Auditoría System'
+      },
+
       {
         path: 'asistencia',
         loadComponent: () => import('./features/asistencia/asistencia.component').then(m => m.AsistenciaComponent),
@@ -50,6 +57,7 @@ export const routes: Routes = [
         title: 'SGE - Escáner QR'
       },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+
     ]
   },
   { path: '404', loadComponent: () => import('./features/error404/error404.component').then(m => m.Error404Component) },

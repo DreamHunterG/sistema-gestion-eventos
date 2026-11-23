@@ -1,1 +1,31 @@
-<p>error404 works!</p>
+<div class="h-screen w-full bg-[#F8FAFC] flex flex-col items-center justify-center font-sans p-6 text-center animate-in">
+
+  <div class="max-w-lg">
+    <!-- Icono de Advertencia Premium -->
+    <div class="bg-blue-50 w-32 h-32 rounded-[3rem] flex items-center justify-center mx-auto mb-10 shadow-inner border border-blue-100">
+      <mat-icon class="text-[#0583F2] scale-[3]">explore_off</mat-icon>
+    </div>
+
+    <h1 class="text-8xl font-black text-slate-200 mb-4 tracking-tighter leading-none">404</h1>
+
+    <h2 class="text-3xl font-black text-slate-800 mb-6 uppercase italic tracking-tight">
+      Ups, este enlace <span class="text-sge-primary">ya no está disponible</span> o tiene un error.
+    </h2>
+
+    <p class="text-gray-400 text-lg mb-12 font-medium leading-relaxed">
+      No te preocupes, el camino hacia la excelencia continúa. Regresa al inicio para gestionar tus eventos y certificados.
+    </p>
+
+    <!-- Botón CTA de tu Copy -->
+    <button routerLink="/dashboard"
+            class="bg-[#001C3B] text-white px-16 py-6 rounded-[2rem] font-black text-xl hover:scale-105 transition-all shadow-2xl flex items-center justify-center gap-4 mx-auto group">
+      <mat-icon class="group-hover:-translate-x-2 transition-transform">arrow_back</mat-icon>
+      Empezar de nuevo
+    </button>
+
+    <footer class="mt-20 opacity-20">
+      <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">SGE Reliability System</p>
+    </footer>
+  </div>
+
+</div>

@@ -1,58 +1,73 @@
-<div class="min-h-screen bg-[#F2F2F2] p-10 font-sans animate-in">
+<div class="min-h-screen bg-[#F2F2F2] p-8 font-sans animate-in">
 
-  <header class="max-w-6xl mx-auto mb-12 text-center lg:text-left">
-    <h1 class="text-[42px] font-black text-[#001C3B] tracking-tighter uppercase italic">Control de Acceso</h1>
-    <p class="text-gray-400 font-medium text-lg italic">Validación táctica de identidad digital en campo.</p>
+  <!-- Selector de Contexto -->
+  <header class="max-w-6xl mx-auto mb-10 flex justify-between items-center bg-white p-8 rounded-[2.5rem] shadow-sm border-l-[12px] border-sge-primary">
+    <div>
+      <h1 class="text-3xl font-black text-[#001C3B] m-0 uppercase italic tracking-tighter">Control de Acceso</h1>
+      <p class="text-gray-400 text-xs font-bold uppercase mt-1 italic">Modo Operativo de Campo</p>
+    </div>
+    <mat-form-field appearance="outline" class="w-96">
+      <mat-label>Evento en Puerta</mat-label>
+      <mat-select (selectionChange)="onEventoChange($event.value)">
+        @for (ev of eventos(); track ev.id) {
+          <mat-option [value]="ev.id">{{ev.nombre}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
   </header>
 
-  <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+  @if (eventoSeleccionado()) {
+    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
 
-    <!-- LADO IZQUIERDO: CÁMARA (HU-13) -->
-    <div class="bg-white p-8 rounded-[3rem] shadow-2xl flex flex-col items-center border border-gray-50">
-      <div class="relative w-full aspect-square bg-black rounded-[2.5rem] overflow-hidden border-8 border-slate-100 shadow-inner">
-        <ngx-scanner-qrcode #action="scanner" [config]="config" (event)="onEvent($event)"></ngx-scanner-qrcode>
+      <!-- ESCÁNER QR -->
+      <div class="bg-white p-10 rounded-[3.5rem] shadow-2xl flex flex-col items-center border border-gray-100">
+        <div class="relative w-full aspect-square bg-black rounded-[3rem] overflow-hidden border-8 border-slate-50">
+          <!-- 🔑 LLAMADA ACTUALIZADA PARA V3 -->
+          <ngx-scanner-qrcode #action="scanner" [config]="config" (event)="onEvent($event, action)"></ngx-scanner-qrcode>
 
-        <!-- Guía Visual Figma -->
-        <div class="absolute inset-0 border-[50px] border-black/50 pointer-events-none"></div>
-        <div class="absolute inset-[70px] border-2 border-[#F3E742] rounded-3xl animate-pulse"></div>
-      </div>
-
-      <div class="mt-8 flex gap-4">
-        <button (click)="action.isStart ? action.stop() : action.start()"
-                [class]="action.isStart ? 'bg-red-500' : 'bg-[#0583F2]'"
-                class="text-white px-10 py-4 rounded-2xl font-black text-xs uppercase shadow-xl transition-all">
-          {{ action.isStart ? 'Apagar Cámara' : 'Encender Cámara' }}
-        </button>
-      </div>
-    </div>
-
-    <!-- LADO DERECHO: ENTRADA MANUAL (HU-14) -->
-    <div class="bg-white p-12 rounded-[3.5rem] shadow-2xl border-t-[15px] border-[#F3E742]">
-      <h2 class="text-3xl font-black text-slate-800 mb-2 tracking-tighter uppercase italic">Registro Manual</h2>
-      <p class="text-gray-400 font-big italic mb-10 text-sm">Contingencia operativa para códigos no legibles.</p>
-
-      <div class="space-y-8">
-        <div class="flex flex-col gap-3">
-          <label class="text-[10px] font-black text-[#0583F2] uppercase ml-1 tracking-widest">ID del Participante</label>
-          <input type="number" [(ngModel)]="idManual"
-                 placeholder="Digita el código aquí..."
-                 class="w-full p-6 bg-slate-50 rounded-2xl border-none outline-none font-black text-2xl text-[#001C3B] shadow-inner">
+          <div class="absolute inset-0 border-[60px] border-black/40 pointer-events-none"></div>
+          <div class="absolute inset-[80px] border-2 border-[#F3E742] rounded-3xl animate-pulse"></div>
         </div>
 
-        <button (click)="procesarIngreso(idManual)"
-                [disabled]="!idManual"
-                class="w-full bg-[#001C3B] text-white py-8 rounded-2xl font-black text-xl shadow-2xl hover:scale-[1.02] transition-all disabled:opacity-20 uppercase tracking-[0.2em]">
-          Validar Ingreso
+        <button (click)="action.isStart ? action.stop() : action.start()"
+                [class]="action.isStart ? 'bg-red-500' : 'bg-sge-primary'"
+                class="mt-8 text-white px-12 py-4 rounded-2xl font-black text-sm uppercase shadow-xl transition-all">
+          {{ action.isStart ? 'Apagar Cámara' : 'Activar Cámara' }}
         </button>
       </div>
 
-      <div class="mt-8 p- bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-4">
-        <mat-icon class="text-sge-primary scale-125">verified</mat-icon>
-        <p class="text-[12px] text-slate-500 font-bold leading-tight m-0">
-          La validación habilita automáticamente el Certificado Autenticado para descarga inmediata.
-        </p>
-      </div>
-    </div>
+      <!-- BÚSQUEDA MANUAL -->
+      <div class="bg-white p-10 rounded-[3.5rem] shadow-2xl flex flex-col h-full">
+        <h2 class="text-2xl font-black text-slate-800 mb-6 uppercase tracking-tighter italic">Búsqueda Manual</h2>
+        <div class="bg-slate-50 p-4 rounded-2xl flex items-center gap-4 mb-8">
+          <mat-icon class="text-slate-300">search</mat-icon>
+          <input type="text" [ngModel]="searchTerm()" (ngModelChange)="searchTerm.set($event)"
+                 placeholder="Buscar por nombre o email..." class="w-full bg-transparent outline-none font-bold text-slate-600">
+        </div>
 
-  </main>
+        <div class="flex-1 overflow-y-auto max-h-[450px] space-y-4 pr-2">
+          @for (p of filteredParticipantes(); track p.id) {
+            <div class="p-5 rounded-2xl border flex items-center justify-between transition-all"
+                 [class]="p.asistio ? 'bg-green-50 border-green-100' : 'bg-white border-slate-100 shadow-sm'">
+              <div>
+                <p class="font-black text-slate-800 m-0 text-sm">{{p.persona.nombreCompleto}}</p>
+                <p class="text-[10px] text-slate-400 font-bold uppercase">{{p.persona.email}}</p>
+              </div>
+              @if (!p.asistio) {
+                <button (click)="procesarIngreso(p.id)" class="bg-[#001C3B] text-white px-4 py-2 rounded-xl text-[9px] font-black hover:scale-105">VALIDAR</button>
+              } @else {
+                <mat-icon class="text-green-500">check_circle</mat-icon>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </main>
+  } @else {
+    <div class="max-w-md mx-auto mt-20 text-center bg-white p-16 rounded-[4rem] shadow-xl border-b-[15px] border-slate-200 animate-in">
+      <mat-icon class="scale-[4] text-slate-100 mb-12">sensors_off</mat-icon>
+      <h3 class="text-slate-400 font-black uppercase tracking-tighter">Esperando Selección</h3>
+      <p class="text-slate-300 text-sm font-medium italic">Elija un evento para habilitar el control de accesos.</p>
+    </div>
+  }
 </div>

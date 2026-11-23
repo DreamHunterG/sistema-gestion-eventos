@@ -1,78 +1,129 @@
-<div class="min-h-screen bg-[#F2F2F2] flex flex-col items-center justify-center font-sans p-6 animate-in">
+<div class="min-h-screen bg-[#F2F2F2] flex items-center justify-center p-8 font-sans animate-in">
 
-  <!-- TARJETA CENTRAL PREMIUM -->
-  <div class="w-full max-w-4xl bg-white p-12 rounded-[3.5rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-50 text-center relative overflow-hidden">
+  <div class="max-w-7xl w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
 
-    <!-- Icono de Red de Confianza -->
-    <div class="bg-blue-50 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-10 shadow-inner">
-      <mat-icon class="text-[#0583F2] scale-150">verified_user</mat-icon>
+    <!-- 🏠 SEGMENTO IZQUIERDO: GO HOME STAGE -->
+    <div class="lg:col-span-4 flex flex-col items-center text-center space-y-8 p-6">
+      <div class="relative">
+        <div class="absolute -inset-4 bg-white/50 blur-2xl rounded-full"></div>
+
+        <!-- AJUSTE AQUÍ: [class.animate-bounce] condicional y duración rápida -->
+        <img src="/image/HouseBackToLogin.png"
+             alt="House go home"
+             [class.animate-bounce]="animandoSalida()"
+             class="w-55 h-48 relative z-10 drop-shadow-2xl transition-all"
+             [style.animation-duration]="animandoSalida() ? '0.85s' : '0s'">
+      </div>
+
+      <div class="space-y-2">
+        <h3 class="text-[#005CAD] font-black text-2xl tracking-tighter uppercase italic m-0">
+          Acceso Restringido
+        </h3>
+        <p class="text-slate-500 font-bold text-sm">
+          ¿Eres Administrador o Monitor de algún evento?
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-4 w-full max-w-[280px]">
+        <!-- BOTÓN LOGIN -->
+        <button (click)="irALogin()"
+                [disabled]="animandoSalida()"
+                class="bg-[#0583F2] text-white px-8 py-5 rounded-3xl font-black text-sm
+                       hover:bg-[#005CAD] transition-all shadow-xl active:scale-95
+                       uppercase tracking-widest flex items-center justify-center gap-3
+                       disabled:opacity-50">
+          <mat-icon>login</mat-icon>
+          {{ animandoSalida() ? 'Cargando...' : 'Iniciar Sesión' }}
+        </button>
+
+        <!-- BOTÓN DEVOLVERSE -->
+        <button (click)="irADashboard()"
+                class="bg-[#F3E742] text-[#666000] px-8 py-5 rounded-3xl font-black text-sm hover:bg-[#666000] hover:text-white transition-all shadow-xl active:scale-95 uppercase tracking-widest flex items-center justify-center gap-3">
+          <mat-icon>arrow_back</mat-icon> Volver al Panel
+        </button>
+      </div>
+
+      <p class="text-[12px] text-slate-400 font-black uppercase tracking-[0.3em] pt-4">SGE SISTEMA DE GESTIÓN DE EVENTOS</p>
     </div>
 
-    <h1 class="text-[52px] font-black text-slate-800 tracking-tighter mb-4 leading-none uppercase italic">Verificar Autenticidad de Constancia</h1>
-    <p class="text-gray-400 text-lg mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
-      Valida la legitimidad de tus logros obtenidos mediante <b>nuestro sistema de registro.</b>
-    </p>
+    <!-- 🛡️ SEGMENTO DERECHO: TARJETA CENTRAL PREMIUM -->
+    <div class="lg:col-span-8">
+      <div class="w-full bg-white p-12 rounded-[4rem] shadow-[0_30px_70px_-15px_rgba(0,0,0,0.1)] border border-white text-center relative overflow-hidden">
 
-    <!-- BARRA DE BÚSQUEDA TIPO GOOGLE -->
-    <div class="bg-[#E9E9E9] p-2 rounded-[2.5rem] flex items-center gap-4 pr-4 mb-8 focus-within:ring-4 ring-blue-100 transition-all">
-      <mat-icon style="color: #666000"  class="text-slate-400 ; ml-6 scale-125">search</mat-icon>
-      <input type="text" [(ngModel)]="query" (keyup.enter)="consultar()"
-             placeholder="Ingresa tu email institucional o el Hash de seguridad..."
-             class="w-full p-5 outline-none text-lg font-bold text-slate-700 bg-transparent placeholder:text-slate-300">
-    </div>
+        <!-- Efecto decorativo de fondo -->
+        <div class="absolute -top-20 -right-20 w-64 h-64 bg-blue-50 rounded-full opacity-50 blur-3xl"></div>
 
-    <button (click)="consultar()" [disabled]="loading()"
-            class="bg-[#0583F2] text-white px-20 py-6 rounded-3xl font-black text-xl hover:bg-[#005CAD] transition-all shadow-xl active:scale-95 disabled:opacity-50 min-w-[280px]">
-      {{ loading() ? 'CONSULTANDO RED...' : 'Validar Logro' }}
-    </button>
+        <!-- Icono de Red de Confianza -->
+        <div class="bg-blue-50 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-inner border border-blue-100">
+          <mat-icon class="text-[#0583F2] scale-150">verified_user</mat-icon>
+        </div>
 
-    <!-- 🎊 TABLA DE RESULTADOS (DISEÑO TIPO SENA) -->
-    @if (busquedaRealizada() && resultados().length > 0) {
-      <div class="mt-16 animate-in border-t pt-10">
-        <div class="overflow-hidden rounded-[2rem] border border-gray-100 shadow-sm">
-          <table class="w-full text-left">
-            <thead class="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-            <tr>
-              <th class="p-6">Nombre del Logro</th>
-              <th class="p-6">Verificación Autenticada</th>
-              <th class="p-6 text-center">Certificación</th>
-            </tr>
-            </thead>
-            <tbody class="divide-y text-slate-700 bg-white">
-              @for (item of resultados(); track item.id) {
-                <tr class="hover:bg-blue-50/40 transition-colors">
-                  <td class="p-6">
-                    <p class="font-black m-0 text-sm text-slate-800 uppercase">{{ item.evento?.nombre || item.evento }}</p>
-                    <p class="text-[9px] text-[#666000] font-bold uppercase tracking-wider mt-1">{{ item.evento?.tipoEvento || 'Oficial' }}</p>
-                  </td>
-                  <td class="p-6">
-                    <code class="text-[10px] text-slate-400 font-mono break-all">{{ item.certificadoHash || item.hash }}</code>
-                  </td>
-                  <td class="p-6 text-center">
-                    <button (click)="descargar(item.id)" class="bg-[#F3E742] text-[#666000] px-6 py-2.5 rounded-xl text-[9px] font-black hover:bg-[#0583F2] hover:text-[#ffffff] transition-all shadow-md">
-                      DESCARGAR PDF
-                    </button>
-                  </td>
+        <h1 class="text-[52px] font-black text-slate-800 tracking-tighter mb-4 leading-none uppercase italic">Verificar Autenticidad</h1>
+        <p class="text-gray-400 text-lg mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
+          Valida la legitimidad de tus logros obtenidos mediante <b class="text-sge-navy">nuestro sistema de registro seguro.</b>
+        </p>
+
+        <!-- BARRA DE BÚSQUEDA TIPO GOOGLE -->
+        <div class="bg-[#E9E9E9] p-2 rounded-[2.5rem] flex items-center gap-4 pr-4 mb-10 shadow-inner focus-within:ring-4 ring-blue-100 transition-all">
+          <mat-icon style="color: #666000" class="ml-6 scale-125">search</mat-icon>
+          <input type="text" [(ngModel)]="query" (keyup.enter)="consultar()"
+                 placeholder="Email institucional o Hash de seguridad..."
+                 class="w-full p-5 outline-none text-xl font-bold text-slate-700 bg-transparent placeholder:text-slate-300">
+        </div>
+
+        <button (click)="consultar()" [disabled]="loading()"
+                class="bg-[#0583F2] text-white px-20 py-6 rounded-3xl font-black text-xl hover:bg-[#005CAD] transition-all shadow-xl active:scale-95 disabled:opacity-50 min-w-[280px]">
+          {{ loading() ? 'CONSULTANDO RED...' : 'Validar Logro' }}
+        </button>
+
+        <!-- 🎊 TABLA DE RESULTADOS -->
+        @if (busquedaRealizada() && resultados().length > 0) {
+          <div class="mt-16 animate-in border-t border-slate-50 pt-10">
+            <div class="overflow-hidden rounded-[2.5rem] border border-gray-100 shadow-sm">
+              <table class="w-full text-left">
+                <thead class="bg-slate-50 text-[18px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                <tr>
+                  <th class="p-8">Nombre del Logro</th>
+                  <th class="p-8">Firma Digital</th>
+                  <th class="p-8 text-center">Acción</th>
                 </tr>
-              }
-            </tbody>
-          </table>
+                </thead>
+                <tbody class="divide-y text-slate-700 bg-white">
+                  @for (item of resultados(); track item.id) {
+                    <tr class="hover:bg-blue-50/40 transition-colors">
+                      <td class="p-8">
+                        <p class="font-black m-0 text-base text-slate-800 uppercase">{{ item.evento?.nombre || item.evento }}</p>
+                        <p class="text-[12px] text-[#666000] font-bold uppercase tracking-wider mt-1">{{ item.evento?.tipoEvento || 'Oficial' }}</p>
+                      </td>
+                      <td class="p-8">
+                        <code class="text-[12px] text-slate-400 font-mono break-all">{{ item.certificadoHash || item.hash }}</code>
+                      </td>
+                      <td class="p-8 text-center">
+                        <button (click)="descargar(item.id)" class="bg-[#F3E742] text-[#666000] px-6 py-3 rounded-2xl font-black text-[12px] hover:bg-[#0583F2] hover:text-white transition-all shadow-md">
+                          DESCARGAR
+                        </button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        } @else if (busquedaRealizada()) {
+          <div class="mt-12 p-12 bg-red-50 rounded-[3rem] border border-red-100 animate-in text-center">
+            <mat-icon class="text-red-400 scale-[2] mb-4">report_problem</mat-icon>
+            <h2 class="text-xl font-black text-red-800 m-0 uppercase tracking-tighter">Sin registros vinculados</h2>
+            <p class="text-red-600 text-sm mt-3 italic font-medium">Verifica el código ingresado o intenta con tu correo institucional.</p>
+          </div>
+        }
+
+        <!-- FOOTER CARD -->
+        <div class="mt-12 flex items-center justify-center gap-4 opacity-50">
+          <mat-icon style="color: #666000;" class="scale-125">verified</mat-icon>
+          <span class="text-[18px] text-[#666000] font-black uppercase tracking-[0.4em]">AUTENTICACIÓN VERIFICADA</span>
         </div>
       </div>
-    } @else if (busquedaRealizada()) {
-      <!-- MENSAJE DE ERROR EMPÁTICO (Tu diseño 404 adaptado) -->
-      <div class="mt-12 p-10 bg-red-50 rounded-[3rem] border border-red-100 animate-in text-center">
-        <mat-icon class="text-red-400 scale-[2] mb-4">report_problem</mat-icon>
-        <h2 class="text-xl font-black text-red-800 m-0">No se encontraron registros</h2>
-        <p class="text-red-600 text-sm mt-2 italic font-medium">Ups, parece que el enlace o correo no es válido. Verifica los datos y continúa.</p>
-      </div>
-    }
+    </div>
 
-  </div>
-
-  <!-- FOOTER INSTITUCIONAL -->
-  <div class="mt-12 flex items-center gap-4 text-slate-400 opacity-60">
-    <mat-icon style="color: #666000;" class="scale-125">stars</mat-icon>
-    <span class="text-[14px]  text-[#666000] uppercase tracking-[0.4em]">Autenticación Verificada</span>
   </div>
 </div>

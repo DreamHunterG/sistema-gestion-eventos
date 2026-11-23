@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ParticipanteService } from '../../services/participante.service';
 import { EventoService } from '../../services/evento.service';
-import { Participante } from '../../models/participante.model';
 import { Evento } from '../../models/evento.model';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,16 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 @Component({
   selector: 'app-asistencia',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatIconModule,
-    MatTableModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    MatSelectModule,
-    MatFormFieldModule
-  ],
+  imports: [CommonModule, FormsModule, MatIconModule, MatTableModule, MatButtonModule, MatSnackBarModule, MatSelectModule, MatFormFieldModule],
   templateUrl: './asistencia.component.html',
   styleUrl: './asistencia.component.scss'
 })
@@ -33,50 +23,38 @@ export class AsistenciaComponent implements OnInit {
   private eventoService = inject(EventoService);
   private snackBar = inject(MatSnackBar);
 
-  // --- 📊 ESTADOS DE DATOS ---
   eventos = signal<Evento[]>([]);
   eventoSeleccionado = signal<number | null>(null);
-  participantes = signal<Participante[]>([]);
+  participantes = signal<any[]>([]);
 
-  // --- ⚙️ ESTADOS DE INTERFAZ (🔑 AQUÍ SE CORRIGE EL ERROR) ---
   showFilters = signal(false);
+  isFormVisible = signal(false);
+  isUploading = signal(false);
   searchTerm = signal('');
-  currentPage = signal(1);
-  displayedColumns: string[] = ['nombre', 'email', 'estado', 'acciones'];
 
-  // --- 🧠 MOTOR DE CÁLCULO DINÁMICO ---
+  nuevoParticipante = { nombreCompleto: '', email: '' };
 
-  // Cuenta cuántos han asistido en el evento actual
-  asistentesCount = computed(() =>
-    this.participantes().filter(p => p.asistio).length
-  );
+  asistentesCount = computed(() => this.participantes().filter(p => p.asistio).length);
 
-  // Calcula el porcentaje para el círculo visual del Figma
   calculatePercent() {
     if (this.participantes().length === 0) return 0;
     return Math.round((this.asistentesCount() / this.participantes().length) * 100);
   }
 
-  // Filtra la tabla según el nombre o email escrito
   filteredParticipantes = computed(() => {
     const term = this.searchTerm().toLowerCase();
     return this.participantes().filter(p =>
-      p.nombreCompleto.toLowerCase().includes(term) ||
-      p.email.toLowerCase().includes(term)
+      p.persona.nombreCompleto.toLowerCase().includes(term) ||
+      p.persona.email.toLowerCase().includes(term)
     );
   });
 
-  // --- 🚀 ACCIONES ---
+  displayedColumns: string[] = ['nombre', 'email', 'estado', 'acciones'];
 
-  ngOnInit() {
-    this.cargarEventos();
-  }
+  ngOnInit() { this.cargarEventos(); }
 
   cargarEventos() {
-    this.eventoService.getEventos().subscribe({
-      next: (data) => this.eventos.set(data),
-      error: () => this.notificar('Falla al conectar con el servidor', 'error')
-    });
+    this.eventoService.getEventos().subscribe(data => this.eventos.set(data));
   }
 
   onEventoChange(id: number) {
@@ -86,40 +64,57 @@ export class AsistenciaComponent implements OnInit {
 
   cargarLista() {
     this.participanteService.getParticipantes().subscribe({
-      next: (data: Participante[]) => {
-        // Vinculamos participantes solo al evento elegido
-        const filtrados = data.filter(p => p.evento?.id === this.eventoSeleccionado());
-        this.participantes.set(filtrados);
-      },
-      error: () => this.notificar('Error al cargar asistentes', 'error')
+      next: (data: any[]) => {
+        // ✅ CORRECCIÓN TS18048: Usamos ?. para evitar el error de undefined
+        this.participantes.set(data.filter(p => p.evento?.id === this.eventoSeleccionado()));
+      }
     });
   }
 
+  // ✅ CORRECCIÓN TS2554: Ahora pasamos 2 argumentos (ID y EventoID)
   checkin(id: number) {
-    this.participanteService.registrarAsistencia(id).subscribe({
+    const eventoId = this.eventoSeleccionado();
+    if (!eventoId) return;
+
+    this.participanteService.registrarAsistencia(id, eventoId).subscribe({
       next: () => {
-        this.notificar('¡Ingreso Validado! Registro exitoso.', 'success');
-        this.cargarLista(); // Refresca para actualizar el Hash y el círculo
+        this.notificar('¡Ingreso Validado!', 'success');
+        this.cargarLista();
       },
-      error: () => this.notificar('No se pudo procesar el ingreso', 'error')
+      error: () => this.notificar('Error al procesar el check-in', 'error')
     });
   }
 
-  // Acción para descargar el certificado, ahora con el nombre incluido
-  descargar(id: number) {
-    // Buscamos al participante en la lista local para obtener su nombre
-    const p = this.participantes().find(part => part.id === id);
-    if (p) {
-      // Ahora enviamos los 2 datos que el servicio pide: ID y Nombre
-      this.participanteService.descargarCertificado(p.id, p.nombreCompleto);
-      this.notificar('Generando diploma oficial...', 'success');
-    }
+  onSaveManual() {
+    if (!this.nuevoParticipante.nombreCompleto || !this.nuevoParticipante.email || !this.eventoSeleccionado()) return;
+    this.isUploading.set(true);
+
+    this.participanteService.registrarManual(
+      this.nuevoParticipante.nombreCompleto,
+      this.nuevoParticipante.email,
+      this.eventoSeleccionado()!
+    ).subscribe({
+      next: () => {
+        this.notificar('Participante vinculado con éxito', 'success');
+        this.cargarLista();
+        this.isFormVisible.set(false);
+        this.nuevoParticipante = { nombreCompleto: '', email: '' };
+        this.isUploading.set(false);
+      },
+      error: () => {
+        this.notificar('Error en el registro', 'error');
+        this.isUploading.set(false);
+      }
+    });
   }
+
+  descargar(id: number, nombre: string) {
+    this.participanteService.descargarCertificado(id, nombre);
+  }
+
+  toggleForm() { this.isFormVisible.update(v => !v); }
 
   private notificar(msg: string, tipo: string) {
-    this.snackBar.open(msg, 'Cerrar', {
-      duration: 3000,
-      panelClass: tipo === 'success' ? ['bg-green-600'] : ['bg-red-600']
-    });
+    this.snackBar.open(msg, 'Cerrar', { duration: 3000, panelClass: tipo === 'success' ? ['bg-green-600'] : ['bg-red-600'] });
   }
 }
