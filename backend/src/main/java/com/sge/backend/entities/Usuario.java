@@ -1,5 +1,6 @@
 package com.sge.backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.HashSet;
@@ -24,6 +25,9 @@ public class Usuario {
     private String nombre;
     private String email;
     private String rol;
+
+    // 🔐 Se puede recibir en un JSON (crear/editar), pero nunca se envía en una respuesta
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String estado = "ACTIVO";
 

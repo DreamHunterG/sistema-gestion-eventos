@@ -21,17 +21,17 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public List<UsuarioResponse> listarTodos() {
         return usuarioRepository.findAll().stream()
-                .map(u -> new UsuarioResponse(
-                        u.getId(),
-                        u.getNombre(),
-                        u.getEmail(),
-                        u.getRol(),
-                        u.getEstado()
-                )).collect(Collectors.toList());
+                .map(this::aRespuesta)
+                .collect(Collectors.toList());
+    }
+
+    // Convierte la entidad en la respuesta pública (sin contraseña)
+    private UsuarioResponse aRespuesta(Usuario u) {
+        return new UsuarioResponse(u.getId(), u.getNombre(), u.getEmail(), u.getRol(), u.getEstado());
     }
 
     @Transactional
-    public Usuario registrarUsuario(Usuario data) {
+    public UsuarioResponse registrarUsuario(Usuario data) {
         data.setPassword(passwordEncoder.encode(data.getPassword()));
         data.setEstado("ACTIVO");
 
@@ -43,11 +43,11 @@ public class UsuarioService {
                 data.getRoles().add(r);
             });
         }
-        return usuarioRepository.save(data);
+        return aRespuesta(usuarioRepository.save(data));
     }
 
     @Transactional
-    public Usuario actualizarUsuario(Long id, Usuario data) {
+    public UsuarioResponse actualizarUsuario(Long id, Usuario data) {
         return usuarioRepository.findById(id).map(u -> {
             u.setNombre(data.getNombre());
             u.setEmail(data.getEmail());
@@ -63,7 +63,7 @@ public class UsuarioService {
             if (data.getPassword() != null && !data.getPassword().isEmpty()) {
                 u.setPassword(passwordEncoder.encode(data.getPassword()));
             }
-            return usuarioRepository.save(u);
+            return aRespuesta(usuarioRepository.save(u));
         }).orElse(null);
     }
 

@@ -18,12 +18,12 @@ public class UsuarioController {
     }
 
     @PostMapping("/registro")
-    public Usuario registrar(@RequestBody Usuario usuario) {
+    public UsuarioResponse registrar(@RequestBody Usuario usuario) {
         return usuarioService.registrarUsuario(usuario);
     }
 
     @PutMapping("/{id}")
-    public Usuario actualizar(@PathVariable Long id, @RequestBody Usuario usuario) {
+    public UsuarioResponse actualizar(@PathVariable Long id, @RequestBody Usuario usuario) {
         return usuarioService.actualizarUsuario(id, usuario);
     }
 

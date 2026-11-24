@@ -1,7 +1,8 @@
 package com.sge.backend.controllers;
 
-import com.sge.backend.entities.Inscripcion; // 🔑 CAMBIO: Ahora usamos Inscripcion
-import com.sge.backend.repositories.InscripcionRepository; // 🔑 CAMBIO: El nuevo repositorio
+import com.sge.backend.dtos.CertificadoPublico;
+import com.sge.backend.entities.Inscripcion;
+import com.sge.backend.repositories.InscripcionRepository;
 import com.sge.backend.services.PDFService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,45 +15,42 @@ import java.util.Map;
 
 /**
  * Portal Público de Verificación (HU-19, HU-25).
- * Acceso anónimo para validación de certificados y consulta de historial.
+ * Acceso anónimo: cualquiera (por ejemplo, una reclutadora) puede comprobar certificados
+ * sin tener cuenta. Solo se muestran certificados emitidos y solo los datos necesarios.
  */
 @RestController
 @RequestMapping("/api/public")
 public class PublicController {
 
     @Autowired
-    private InscripcionRepository repo; // Usamos el repositorio de inscripciones
+    private InscripcionRepository repo;
 
     @Autowired
     private PDFService pdfService;
 
-    // HU-19: Validar autenticidad mediante el código Hash
-    @GetMapping("/validar/{hash}")
-    public ResponseEntity<?> validar(@PathVariable String hash) {
-        return repo.findByCertificadoHash(hash)
-                .map(ins -> ResponseEntity.ok(Map.of(
-                        "id", ins.getId(),
-                        "valido", true,
-                        // 🔑 ACCESO NORMALIZADO: ins -> persona -> nombre
-                        "participante", ins.getPersona().getNombreCompleto(),
-                        "evento", ins.getEvento().getNombre(),
-                        "tipo", ins.getEvento().getTipoEvento().name()
-                )))
+    // HU-19: Validar autenticidad mediante el código del certificado
+    @GetMapping("/validar/{codigo}")
+    public ResponseEntity<?> validar(@PathVariable String codigo) {
+        return repo.findByCertificadoHash(codigo.trim())
+                .<ResponseEntity<?>>map(ins -> ResponseEntity.ok(CertificadoPublico.desde(ins)))
                 .orElse(ResponseEntity.status(404).body(Map.of("valido", false, "mensaje", "Código no encontrado")));
     }
 
-    // HU-25: Historial por Persona (Estilo SENA)
+    // HU-25: Historial de certificados de una persona (solo los emitidos: la persona asistió)
     @GetMapping("/mis-certificados/{email}")
-    public List<Inscripcion> buscarPorEmail(@PathVariable String email) {
-        // El repositorio ya tiene el método para buscar por el email de la tabla Persona
-        return repo.findByPersonaEmail(email);
+    public List<CertificadoPublico> buscarPorEmail(@PathVariable String email) {
+        return repo.findByPersonaEmailIgnoreCaseAndCertificadoHashIsNotNull(email.trim()).stream()
+                .map(CertificadoPublico::desde)
+                .toList();
     }
 
-    // Descarga pública (Sin Token)
-    @GetMapping("/download/{id}")
-    public ResponseEntity<byte[]> downloadPublico(@PathVariable Long id) {
-        Inscripcion ins = repo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Registro no encontrado"));
+    // Descarga pública por código: imposible de adivinar, a diferencia de un ID 1, 2, 3...
+    @GetMapping("/download/{codigo}")
+    public ResponseEntity<byte[]> downloadPublico(@PathVariable String codigo) {
+        Inscripcion ins = repo.findByCertificadoHash(codigo.trim()).orElse(null);
+        if (ins == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         byte[] pdf = pdfService.generarCertificado(ins);
 

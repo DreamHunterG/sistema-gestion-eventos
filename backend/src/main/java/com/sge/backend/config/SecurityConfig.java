@@ -29,7 +29,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/usuarios/registro", "/api/public/**").permitAll()
+                        // 🔓 Públicas: login y portal de verificación de certificados.
+                        // El registro de usuarios NO es público: solo un ADMIN crea cuentas (regla /api/usuarios/**).
+                        .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
                         // 🛡️ Las APIs de gestión requieren que el Token diga ROLE_ADMIN
                         .requestMatchers("/api/eventos/**").hasRole("ADMIN")
                         .requestMatchers("/api/usuarios/**").hasRole("ADMIN")
